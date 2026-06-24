@@ -3,13 +3,13 @@ import * as api from '../api.config'
 
 //Тест searchclient валидный
 const body = api.buildSearchClientBody()
-const url = api.buildLoadUrl('searchclient')
+//const url = api.buildLoadUrl('searchclient')
 
-console.log('REQUEST_URL', url)
+console.log('REQUEST_URL', api.buildLoadUrl('searchclient'))
 console.log('REQUEST_BODY', JSON.stringify(body, null, 2))
 
 test('SearchClient', async ({ request }) => {
-    const requestsearch = await request.post(url, {
+    const requestsearch = await request.post(api.buildLoadUrl('searchclient'), {
         data: body
     })
     const responseBody = await requestsearch.json()
