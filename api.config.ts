@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import path from 'path';
+import { SearchClientRequestBody } from './types/RequestTypes';
 
 dotenv.config({ path: path.resolve(__dirname, './.env') });
 
@@ -32,7 +33,7 @@ export function generateClientPhone(): string {
 }
 
 //Функция создания тела запроса searchclient
-export function buildSearchClientBody() {
+export function buildSearchClientBody(): SearchClientRequestBody {
 
     const price = 100
 
@@ -69,22 +70,19 @@ export function buildSearchClientBody() {
                 maxDiscount: 100,
                 discounted_price: discountedPrice,
                 discounted_total: discountedPrice * quantity,
-                parent_code: null,
-                parent_vendor_code: null,
                 good_promo: [
                     `01234567891`
                 ]
             }
         ],
-        promo_codes: [
-            {
-                coupons: [
-                    {
-                        coupon: `01234567891`
-                    }
-                ]
-            }
-        ],
+        promo_codes:
+        {
+            coupons: [
+                {
+                    coupon: `01234567891`
+                }
+            ]
+        },
         card_apply_dt: localDate,
         pos_discounts_are_used: 0
     }
