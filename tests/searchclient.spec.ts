@@ -5,8 +5,8 @@ import * as api from '../api.config'
 const body = api.buildSearchClientBody()
 //const url = api.buildLoadUrl('searchclient')
 
-console.log('REQUEST_URL', api.buildLoadUrl('searchclient'))
-console.log('REQUEST_BODY', JSON.stringify(body, null, 2))
+//console.log('REQUEST_URL', api.buildLoadUrl('searchclient'))
+//console.log('REQUEST_BODY', JSON.stringify(body, null, 2))
 
 test('SearchClient', async ({ request }) => {
     const requestsearch = await request.post(api.buildLoadUrl('searchclient'), {
