@@ -2,7 +2,7 @@ import { test, expect, APIRequestContext } from '@playwright/test'
 import * as api from '../api.config'
 import type { SearchClientRequestBody, GoodsData } from '../types/RequestTypes'
 
-//Получение локальной даты компуктера
+//Получение локальной даты компьютера
 const now = new Date();
 const localDate = now.toLocaleDateString('ru-RU', {
     day: '2-digit',
