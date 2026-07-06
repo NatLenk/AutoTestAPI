@@ -1,5 +1,7 @@
 import dotenv from 'dotenv';
 import path from 'path';
+import { GoodsData } from './types/RequestTypes';
+import { APIResponse } from '@playwright/test';
 
 dotenv.config({ path: path.resolve(__dirname, './.env') });
 
@@ -22,6 +24,38 @@ export function buildLoadUrl(endpoint: string): string {
     return url.toString();
 }
 
+//Функция получение локальной даты компьютера
+export function getLocalDateTime(date = new Date()): string {
+    const pad = (value: number): string => value.toString().padStart(2, '0')
+
+    const day = pad(date.getDate())
+    const month = pad(date.getMonth() + 1)
+    const year = date.getFullYear()
+    const hours = pad(date.getHours())
+    const minutes = pad(date.getMinutes())
+    const seconds = pad(date.getSeconds())
+
+    return `${hours}:${minutes}:${seconds} ${day}.${month}.${year}`
+}
+
+//Функция логирования запроса
+export function logApiRequest(
+    url: string,
+    body: unknown
+) {
+    console.log('REQUEST_URL', url)
+    console.log('REQUEST_BODY', JSON.stringify(body, null, 2))
+}
+
+//Функция логирования ответа
+export function logApiResponse(
+    response: APIResponse,
+    responseBody: unknown
+) {
+    console.log('STATUS', response.status())
+    console.log('RESPONSE_BODY', JSON.stringify(responseBody, null, 2))
+}
+
 //Функция генерации телефонного номера
 export function generateClientPhone(): string {
     let phoneNumber = `79`
@@ -31,61 +65,30 @@ export function generateClientPhone(): string {
     return phoneNumber;
 }
 
-//Функция создания тела запроса searchclient
-export function buildSearchClientBody() {
-
+//Функция создания массива goods_data
+export function buildGoodsData(): GoodsData[] {
     const price = 100
-
     const quantity = 2
-
     const discountedPrice = 100
+    const goodPromoCode = `01234567891`
 
-    //Получение локальной даты компуктера
-    const now = new Date();
-    const localDate = now.toLocaleDateString('ru-RU', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-    }) + ' ' + now.toLocaleTimeString('ru-RU', {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-    })
-
-    return {
-        search_mode: 0,
-        search_value: generateClientPhone(),
-        goods_data: [
-            {
-                code: `2027`,
-                barcode: `50055005`,
-                vendor_code: `2702`,
-                name: `Товар из автотеста`,
-                variant: `Вариант товара из автотеста`,
-                price,
-                quantity,
-                total: price * quantity,
-                minPrice: 0,
-                maxDiscount: 100,
-                discounted_price: discountedPrice,
-                discounted_total: discountedPrice * quantity,
-                parent_code: null,
-                parent_vendor_code: null,
-                good_promo: [
-                    `01234567891`
-                ]
-            }
-        ],
-        promo_codes: [
-            {
-                coupons: [
-                    {
-                        coupon: `01234567891`
-                    }
-                ]
-            }
-        ],
-        card_apply_dt: localDate,
-        pos_discounts_are_used: 0
-    }
+    return [
+        {
+            code: `2027`,
+            barcode: `50055005`,
+            vendor_code: `2702`,
+            name: `Товар из автотеста`,
+            variant: `Вариант товара из автотеста`,
+            price,
+            quantity,
+            total: price * quantity,
+            minPrice: 0,
+            maxDiscount: 100,
+            discounted_price: discountedPrice,
+            discounted_total: discountedPrice * quantity,
+            good_promo: [
+                goodPromoCode
+            ]
+        }
+    ]
 }

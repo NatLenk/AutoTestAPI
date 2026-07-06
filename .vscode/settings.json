@@ -1,0 +1,16 @@
+{
+    "explorerSort.rules": [
+        {
+            "name": "Auto-generated for **/tests/**",
+            "pathPattern": "**/tests/**",
+            "priorities": [
+                {
+                    "condition": "name === 'searchclient.spec.ts'",
+                    "priority": 0,
+                    "referenceFile": "addclient.spec.ts",
+                    "offset": 0
+                }
+            ]
+        }
+    ]
+}
