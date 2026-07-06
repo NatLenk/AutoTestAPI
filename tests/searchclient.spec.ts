@@ -2,37 +2,38 @@ import { test, expect, APIRequestContext } from '@playwright/test'
 import * as api from '../api.config'
 import type { SearchClientRequestBody } from '../types/RequestTypes'
 
+//Получение локальной даты компуктера
+const now = new Date();
+const localDate = now.toLocaleDateString('ru-RU', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+}) + ' ' + now.toLocaleTimeString('ru-RU', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
+})
+
+//Функция генерации телефонного номера
+function generateSearchClientPhone(): string {
+    let phoneNumber = `79`
+    for (let i = 0; i < 9; i++) {
+        phoneNumber += Math.floor(Math.random() * 10).toString();
+    }
+    return phoneNumber;
+}
+
 //Функция создания тела запроса searchclient
 function buildSearchClientBody(): SearchClientRequestBody {
 
-    //Функция генерации телефонного номера
-    function generateClientPhone(): string {
-        let phoneNumber = `79`
-        for (let i = 0; i < 9; i++) {
-            phoneNumber += Math.floor(Math.random() * 10).toString();
-        }
-        return phoneNumber;
-    }
-
-    //Получение локальной даты компуктера
-    const now = new Date();
-    const localDate = now.toLocaleDateString('ru-RU', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-    }) + ' ' + now.toLocaleTimeString('ru-RU', {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-    })
-    
     const price = 100
     const quantity = 2
     const discountedPrice = 100
-    
+    const goodPromoCode = `01234567891`
+    const couponPromoCode = `01234567891`
     return {
         search_mode: 0,
-        search_value: generateClientPhone(),
+        search_value: generateSearchClientPhone(),
         goods_data: [
             {
                 code: `2027`,
@@ -48,7 +49,7 @@ function buildSearchClientBody(): SearchClientRequestBody {
                 discounted_price: discountedPrice,
                 discounted_total: discountedPrice * quantity,
                 good_promo: [
-                    `01234567891`
+                    goodPromoCode
                 ]
             }
         ],
@@ -56,7 +57,7 @@ function buildSearchClientBody(): SearchClientRequestBody {
         {
             coupons: [
                 {
-                    coupon: `01234567891`
+                    coupon: couponPromoCode
                 }
             ]
         },
@@ -70,7 +71,7 @@ function buildSearchClientBody(): SearchClientRequestBody {
 //const url = api.buildLoadUrl('searchclient')
 
 test('Валидный searchclient', async ({ request }) => {
-    const body: SearchClientRequestBody = buildSearchClientBody()
+    const body = buildSearchClientBody()
     const responce = await request.post(api.buildLoadUrl('searchclient'), {
         data: body
     })

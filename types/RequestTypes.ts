@@ -156,7 +156,7 @@ export type ConfirmSale = {
     doc_open_dt: string,
     doc_dt: string,
     shift_open_dt?: string,
-    is_offline?: number,
+    is_offline?: 0 | 1,
     username?: string,
     useruid?: string,
     payments?: Payments[],
@@ -246,7 +246,7 @@ type Inside = {
     code: string,
     variant?: string,
     K?: number
-}[]
+}
 
 export type GoodsList = {
     id: number,
