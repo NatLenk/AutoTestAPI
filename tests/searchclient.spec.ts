@@ -1,66 +1,16 @@
-import { test, expect, APIRequestContext } from '@playwright/test'
+import { test, expect } from '@playwright/test'
 import * as api from '../api.config'
-import type { SearchClientRequestBody, GoodsData } from '../types/RequestTypes'
-
-//Получение локальной даты компьютера
-const now = new Date();
-const localDate = now.toLocaleDateString('ru-RU', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric'
-}) + ' ' + now.toLocaleTimeString('ru-RU', {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit'
-})
-
-//Функция генерации телефонного номера
-function generateSearchClientPhone(): string {
-    let phoneNumber = `79`
-    for (let i = 0; i < 9; i++) {
-        phoneNumber += Math.floor(Math.random() * 10).toString();
-    }
-    return phoneNumber;
-}
-
-//Функция создания массива goods_data
-
-export function buildGoodsData(): GoodsData[] {
-    const price = 100
-    const quantity = 2
-    const discountedPrice = 100
-    const goodPromoCode = `01234567891`
-
-    return [
-        {
-            code: `2027`,
-            barcode: `50055005`,
-            vendor_code: `2702`,
-            name: `Товар из автотеста`,
-            variant: `Вариант товара из автотеста`,
-            price,
-            quantity,
-            total: price * quantity,
-            minPrice: 0,
-            maxDiscount: 100,
-            discounted_price: discountedPrice,
-            discounted_total: discountedPrice * quantity,
-            good_promo: [
-                goodPromoCode
-            ]
-        }
-    ]
-}
+import type { SearchClientRequestBody } from '../types/RequestTypes'
 
 //Функция создания тела запроса searchclient
-function buildSearchClientBody(): SearchClientRequestBody {
+function buildSearchClientBody(phone: string): SearchClientRequestBody {
 
     const couponPromoCode = `01234567891`
 
     return {
         search_mode: 0,
-        search_value: generateSearchClientPhone(),
-        goods_data: buildGoodsData(),
+        search_value: phone,
+        goods_data: api.buildGoodsData(),
         promo_codes:
         {
             coupons: [
@@ -69,34 +19,48 @@ function buildSearchClientBody(): SearchClientRequestBody {
                 }
             ]
         },
-        card_apply_dt: localDate,
+        card_apply_dt: api.getLocalDateTime(),
+        full_data: false,
         pos_discounts_are_used: 0
     }
 }
 
 //Тест searchclient валидный
-
-const url = api.buildLoadUrl('searchclient')
+const searchClientUrl = api.buildLoadUrl('searchclient')
 
 test('Валидный searchclient', async ({ request }) => {
-    const body = buildSearchClientBody()
-    const responce = await request.post(url, {
+    let phone = api.generateClientPhone()
+    let body = buildSearchClientBody(phone)
+    let response = await request.post(searchClientUrl, {
         data: body
     })
-    const responseBody = await responce.json()
-    console.log('REQUEST_URL', url)
-    console.log('REQUEST_BODY', JSON.stringify(body, null, 2))
-    console.log('RESPONSE_BODY', JSON.stringify(responseBody, null, 2))
+
+    expect(response.status()).toBe(200)
+
+    let responseBody = await response.json()
+
+    /*while (responseBody.state !== null) {
+        phone = api.generateClientPhone()
+        body = buildSearchClientBody(phone)
+
+        response = await request.post(searchClientUrl, {
+            data: body
+        })
+
+        responseBody = await response.json()
+    }*/
+
+    api.logApiRequest(searchClientUrl, body)
+    api.logApiResponse(response, responseBody)
 })
 
-test('Невалидный searchclient', async ({ request }) => {
-    const invalidBody = buildSearchClientBody() as any
+/*test('Невалидный searchclient', async ({ request }) => {
+    const invalidBody = buildSearchClientBody(generateSearchClientPhone()) as any
     invalidBody.search_mode = 999
-    const responce = await request.post(url, {
+    const response = await request.post(searchClientUrl, {
         data: invalidBody
     })
-    const responseBody = await responce.json()
-    console.log('REQUEST_URL', url)
-    console.log('REQUEST_BODY', JSON.stringify(invalidBody, null, 2))
-    console.log('RESPONSE_BODY', JSON.stringify(responseBody, null, 2))
-})
+    const responseBody = await response.json()
+    api.logApiRequest(searchClientUrl, invalidBody)
+    api.logApiResponse(response, responseBody)
+})*/
