@@ -1,5 +1,3 @@
-#Для корректной работы нужно создать файл .env в котором указать параметры baseUrl и token
-
 # Playwright
 node_modules/
 /test-results/
@@ -8,4 +6,3 @@ node_modules/
 /playwright/.cache/
 /playwright/.auth/
 .env
-.vscode/
