@@ -240,3 +240,60 @@ export type Goods = {
     name: string,
     full_name?: string
 }[]
+
+//Типизирование тела запроса goodslist
+type Inside = {
+    code: string,
+    variant?: string,
+    K?: number
+}[]
+
+export type GoodsList = {
+    id: number,
+    inside: Inside[]
+}[]
+
+//Типизирование тела запроса searchgiftcard
+export type SearchGiftCard = {
+    barcode: string
+}
+
+//Типизирование тела запроса generategiftcard
+export type GenerateGiftCard = {
+    program_id: number
+}
+
+//Типизирование тела запроса getwalletlink
+export type GetWalletLink = {
+    client_id: number
+}
+
+//Типизирование тела запроса getsalesindicesslides
+export type GetSalesIndicesSlides = {
+    date?: string
+}
+
+//Типизирование тела запроса closesession
+type PaymentsSession = {
+    payment_amount?: number,
+    type?: 0 | 1 | 2 | 3 | 99
+}
+
+export type CloseSession = {
+    payments: PaymentsSession[],
+    shift_close_dt: string,
+    shift_number: number
+}
+
+//Типизирование тела запроса exchangepossettings
+export type ExchangePosSettings = {
+    pos_program: string,
+    version: string,
+    autoupdate: 0 | 1
+}
+
+//Типизирование тела запроса generatecard
+export type GenerateCard = {
+    client_id: number,
+    outer_systems_interface_type: 4
+}
