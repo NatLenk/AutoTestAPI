@@ -1,5 +1,5 @@
 //Типизирование тела запроса searchclient
-type GoodsData = {
+export type GoodsData = {
     code: string,
     barcode?: string,
     vendor_code: string,

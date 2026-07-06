@@ -1,6 +1,6 @@
 import { test, expect, APIRequestContext } from '@playwright/test'
 import * as api from '../api.config'
-import type { SearchClientRequestBody } from '../types/RequestTypes'
+import type { SearchClientRequestBody, GoodsData } from '../types/RequestTypes'
 
 //Получение локальной даты компуктера
 const now = new Date();
@@ -23,36 +23,44 @@ function generateSearchClientPhone(): string {
     return phoneNumber;
 }
 
-//Функция создания тела запроса searchclient
-function buildSearchClientBody(): SearchClientRequestBody {
+//Функция создания массива goods_data
 
+export function buildGoodsData(): GoodsData[] {
     const price = 100
     const quantity = 2
     const discountedPrice = 100
     const goodPromoCode = `01234567891`
+
+    return [
+        {
+            code: `2027`,
+            barcode: `50055005`,
+            vendor_code: `2702`,
+            name: `Товар из автотеста`,
+            variant: `Вариант товара из автотеста`,
+            price,
+            quantity,
+            total: price * quantity,
+            minPrice: 0,
+            maxDiscount: 100,
+            discounted_price: discountedPrice,
+            discounted_total: discountedPrice * quantity,
+            good_promo: [
+                goodPromoCode
+            ]
+        }
+    ]
+}
+
+//Функция создания тела запроса searchclient
+function buildSearchClientBody(): SearchClientRequestBody {
+
     const couponPromoCode = `01234567891`
+
     return {
         search_mode: 0,
         search_value: generateSearchClientPhone(),
-        goods_data: [
-            {
-                code: `2027`,
-                barcode: `50055005`,
-                vendor_code: `2702`,
-                name: `Товар из автотеста`,
-                variant: `Вариант товара из автотеста`,
-                price,
-                quantity,
-                total: price * quantity,
-                minPrice: 0,
-                maxDiscount: 100,
-                discounted_price: discountedPrice,
-                discounted_total: discountedPrice * quantity,
-                good_promo: [
-                    goodPromoCode
-                ]
-            }
-        ],
+        goods_data: buildGoodsData(),
         promo_codes:
         {
             coupons: [
@@ -68,15 +76,15 @@ function buildSearchClientBody(): SearchClientRequestBody {
 
 //Тест searchclient валидный
 
-//const url = api.buildLoadUrl('searchclient')
+const url = api.buildLoadUrl('searchclient')
 
 test('Валидный searchclient', async ({ request }) => {
     const body = buildSearchClientBody()
-    const responce = await request.post(api.buildLoadUrl('searchclient'), {
+    const responce = await request.post(url, {
         data: body
     })
     const responseBody = await responce.json()
-    console.log('REQUEST_URL', api.buildLoadUrl('searchclient'))
+    console.log('REQUEST_URL', url)
     console.log('REQUEST_BODY', JSON.stringify(body, null, 2))
     console.log('RESPONSE_BODY', JSON.stringify(responseBody, null, 2))
 })
@@ -84,11 +92,11 @@ test('Валидный searchclient', async ({ request }) => {
 test('Невалидный searchclient', async ({ request }) => {
     const invalidBody = buildSearchClientBody() as any
     invalidBody.search_mode = 999
-    const responce = await request.post(api.buildLoadUrl('searchclient'), {
+    const responce = await request.post(url, {
         data: invalidBody
     })
     const responseBody = await responce.json()
-    console.log('REQUEST_URL', api.buildLoadUrl('searchclient'))
+    console.log('REQUEST_URL', url)
     console.log('REQUEST_BODY', JSON.stringify(invalidBody, null, 2))
     console.log('RESPONSE_BODY', JSON.stringify(responseBody, null, 2))
 })
