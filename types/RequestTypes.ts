@@ -41,7 +41,7 @@ export type SearchClientRequestBody = {
 }
 
 //Типизирование тела запроса addclient
-export type SpecialDay = {
+type SpecialDay = {
     id: number,
     value: string
 }
