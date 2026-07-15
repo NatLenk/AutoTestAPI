@@ -1,5 +1,13 @@
-import { defineConfig, devices } from '@playwright/test';
+import { existsSync } from 'node:fs'
+import { resolve } from 'node:path'
+import { loadEnvFile } from 'node:process'
+import { defineConfig, devices } from '@playwright/test'
 
+const localEnvironmentPath = resolve(__dirname, '.env.local')
+
+if (existsSync(localEnvironmentPath)) {
+  loadEnvFile(localEnvironmentPath)
+}
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
