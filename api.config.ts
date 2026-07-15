@@ -16,10 +16,6 @@ function requiredEnv(name: string): string {
 const baseUrl = requiredEnv('BASE_URL')
 const token = requiredEnv('API_TOKEN')
 
-/*export const apiConfig = {
-    baseUrl,
-    token
-};*/
 
 //Функция создания url с проверкой и удалением лишних слешей перед endpoint
 export function buildLoadUrl(endpoint: string): string {
@@ -54,7 +50,7 @@ export function logApiRequest(
     const safeUrl = new URL(url)
     safeUrl.searchParams.set('h', '***')
 
-    console.log('REQUEST_URL', url)
+    console.log('REQUEST_URL', safeUrl.toString())
     console.log('REQUEST_BODY', JSON.stringify(body, null, 2))
 }
 
