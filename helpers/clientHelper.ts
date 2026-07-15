@@ -4,6 +4,8 @@ import type * as Types from '../types/RequestTypes'
 
 export const searchClientUrl = api.buildLoadUrl('searchclient')
 export const addClientUrl = api.buildLoadUrl('addclient')
+export const getClientFullBalanceUrl = api.buildLoadUrl('getclientfullbalance')
+export const manualAddUrl = api.buildLoadUrl('manualadd')
 
 //Функция создания тела запроса addclient
 export function buildAddClientBody(phone: string, clientId: number | null): Types.AddClientRequestBody {
@@ -181,15 +183,71 @@ export function buildSearchClientBody(phone: string): Types.SearchClientRequestB
 }
 
 //Функция подсчета баланса клиента
-function calculateTotalBalance(items: Types.BalanceItem[]): number {
+export function calculateTotalBalance(items: Types.BalanceItem[]): number {
     return items.reduce((total, item) => {
         return total + Number(item.balance)
     }, 0)
 }
 
 //Функция построения тела запроса getclientfullbalance
-function buildBalanceBody(client_id: number): Types.GetClientFullBalanceRequestBody {
+export function buildBalanceBody(client_id: number): Types.GetClientFullBalanceRequestBody {
     return {
         client_id: client_id
     }
+}
+
+// Функция получения общего баланса клиента
+export async function getClientBalance(
+    request: APIRequestContext,
+    clientId: number
+): Promise<number> {
+    const body = buildBalanceBody(clientId)
+
+    const response = await request.post(getClientFullBalanceUrl, {
+        data: body
+    })
+    expect(response.status()).toBe(200)
+
+    const responseBody = await response.json() as Types.BalanceItem[]
+
+    api.logApiRequest(getClientFullBalanceUrl, body)
+    api.logApiResponse(response, responseBody)
+
+    expect(Array.isArray(responseBody)).toBe(true)
+
+    return calculateTotalBalance(responseBody)
+}
+
+//Функция создания тела запроса manualadd
+export function buildManualAddBody(
+    clientId: number,
+    bonusAmount: number
+): Types.ManualAdd {
+    return {
+        client_id: clientId,
+        bonus_in: bonusAmount,
+        description: 'Начисление бонусов автотестом'
+    }
+}
+
+//Функция начисления бонусов
+export async function addManualBonus(
+    request: APIRequestContext,
+    clientId: number,
+    bonusAmount: number
+): Promise<void> {
+    const body = buildManualAddBody(clientId, bonusAmount)
+
+    const response = await request.post(manualAddUrl, {
+        data: body
+    })
+
+    expect(response.status()).toBe(200)
+
+    const responseBody = await response.json() as Types.ManualAddResponseBody
+
+    api.logApiRequest(manualAddUrl, body)
+    api.logApiResponse(response, responseBody)
+
+    expect(responseBody.result_code).toBe(0)
 }

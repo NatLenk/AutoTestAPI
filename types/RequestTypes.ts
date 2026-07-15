@@ -178,7 +178,7 @@ export type ConfirmSale = {
     }[]
 }
 
-//Типизирование тела запроса manualadd
+//Типизирование запроса manualadd
 export type ManualAdd = {
     client_id: number,
     bonus_in?: number,
@@ -186,6 +186,11 @@ export type ManualAdd = {
     total?: number,
     description?: string,
     expire_date?: string
+}
+
+export type ManualAddResponseBody = {
+    result_code: number
+    result_text: string
 }
 
 //Типизирование тела запроса getmovesbyclient
