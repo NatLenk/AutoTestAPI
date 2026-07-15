@@ -53,7 +53,7 @@ export function logApiResponse(
     responseBody: unknown
 ) {
     console.log('STATUS', response.status())
-    console.log('RESPONSE_BODY', JSON.stringify(responseBody, null, 1 | 2))
+    console.log('RESPONSE_BODY', JSON.stringify(responseBody, null, 2))
 }
 
 //Функция генерации телефонного номера
