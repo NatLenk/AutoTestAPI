@@ -1,36 +1,13 @@
 import { test, expect } from '@playwright/test'
 import * as api from '../api.config'
-import type { SearchClientRequestBody } from '../types/RequestTypes'
+import * as helper from '../helpers/clientHelper'
 
-//Функция создания тела запроса searchclient
-function buildSearchClientBody(phone: string): SearchClientRequestBody {
-
-    const couponPromoCode = `01234567891`
-
-    return {
-        search_mode: 0,
-        search_value: phone,
-        goods_data: api.buildGoodsData(),
-        promo_codes:
-        {
-            coupons: [
-                {
-                    coupon: couponPromoCode
-                }
-            ]
-        },
-        card_apply_dt: api.getLocalDateTime(),
-        full_data: false,
-        pos_discounts_are_used: 0
-    }
-}
 
 //Тест searchclient валидный
-const searchClientUrl = api.buildLoadUrl('searchclient')
-
 test('Валидный searchclient', async ({ request }) => {
-    let phone = api.generateClientPhone()
-    let body = buildSearchClientBody(phone)
+    const searchClientUrl = api.buildLoadUrl('searchclient')
+    let phone = helper.generateClientPhone()
+    let body = helper.buildSearchClientBody(phone)
     let response = await request.post(searchClientUrl, {
         data: body
     })
