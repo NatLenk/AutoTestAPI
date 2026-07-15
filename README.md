@@ -9,7 +9,20 @@
 
 ## Содержимое проекта:
 
--Для использования репозитория нужены переменные окружения GitHub. Cоздать GitHub Environment api-test, переменные BASE_URL и API_TOKEN
+-Для запуска тестов в CI нужны переменные окружения GitHub. Cоздать GitHub Environment api-test, переменные BASE_URL и API_TOKEN
+
+-Для локальной отладки тестов нужно создать файл .env.local указав те же переменные как и в GitHub и настроить playwright.config.ts:
+
+import { existsSync } from 'node:fs'
+import { resolve } from 'node:path'
+import { loadEnvFile } from 'node:process'
+import { defineConfig, devices } from '@playwright/test'
+
+const localEnvironmentPath = resolve(__dirname, '.env.local')
+
+if (existsSync(localEnvironmentPath)) {
+  loadEnvFile(localEnvironmentPath)
+}
 
 -Папка tests содержит файлы запросов. Название каждого файла соответствует эндпоинту.
 
