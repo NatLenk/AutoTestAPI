@@ -1,4 +1,4 @@
-//Типизирование тела запроса searchclient
+//Типизирование запроса searchclient
 export type GoodsData = {
     code: string,
     barcode?: string,
@@ -40,6 +40,11 @@ export type SearchClientRequestBody = {
 
 }
 
+export type SearchClientResponseBody = {
+    state: null | 0 | 1 | 2 | 3 | 4
+    client_id: string | null
+}
+
 //Типизирование тела запроса addclient
 type SpecialDay = {
     id: number,
@@ -67,6 +72,12 @@ export type AddClientRequestBody = {
 }
 
 //Типизирование тела запроса getclientfullbalance
+export type BalanceItem = {
+    balance: string,
+    begin_dt: string | null,
+    expire_dt: string | null
+}
+
 export type GetClientFullBalanceRequestBody = {
     client_id: number
 }
