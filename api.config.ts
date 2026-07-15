@@ -2,20 +2,8 @@ import { GoodsData } from './types/RequestTypes';
 import { APIResponse } from '@playwright/test';
 
 
-//Функция валидирования обязательных переменных для запуска проекта
-function requiredEnv(name: string): string {
-    const value = process.env[name]
-
-    if (!value) {
-        throw new Error(`Required environment variable ${name} is missing`)
-    }
-
-    return value
-}
-
-const baseUrl = requiredEnv('BASE_URL')
-const token = requiredEnv('API_TOKEN')
-
+const baseUrl = process.env.BASE_URL!
+const token = process.env.API_TOKEN!
 
 //Функция создания url с проверкой и удалением лишних слешей перед endpoint
 export function buildLoadUrl(endpoint: string): string {
