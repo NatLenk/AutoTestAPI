@@ -50,7 +50,7 @@ test('Валидный addclient - добавление клиента', async (
 
     expect(addClientResponse.status()).toBe(200)
 
-    const addClientResponseBody = addClientResponse.json()
+    const addClientResponseBody = await addClientResponse.json()
 
     api.logApiRequest(addClientUrl, addClientBody)
     api.logApiResponse(addClientResponse, addClientResponseBody)
