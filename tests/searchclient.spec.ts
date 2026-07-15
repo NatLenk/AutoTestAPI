@@ -5,10 +5,9 @@ import * as helper from '../helpers/clientHelper'
 
 //Тест searchclient валидный
 test('Валидный searchclient', async ({ request }) => {
-    const searchClientUrl = api.buildLoadUrl('searchclient')
     let phone = helper.generateClientPhone()
     let body = helper.buildSearchClientBody(phone)
-    let response = await request.post(searchClientUrl, {
+    let response = await request.post(helper.searchClientUrl, {
         data: body
     })
 
@@ -27,7 +26,7 @@ test('Валидный searchclient', async ({ request }) => {
         responseBody = await response.json()
     }*/
 
-    api.logApiRequest(searchClientUrl, body)
+    api.logApiRequest(helper.searchClientUrl, body)
     api.logApiResponse(response, responseBody)
 })
 
