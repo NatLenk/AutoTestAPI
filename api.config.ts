@@ -1,12 +1,20 @@
-import dotenv from 'dotenv';
-import path from 'path';
 import { GoodsData } from './types/RequestTypes';
 import { APIResponse } from '@playwright/test';
 
-dotenv.config({ path: path.resolve(__dirname, './.env') });
 
-const baseUrl = process.env.baseUrl as string
-const token = process.env.token as string
+//Функция валидирования обязательных переменных для запуска проекта
+function requiredEnv(name: string): string {
+    const value = process.env[name]
+
+    if (!value) {
+        throw new Error(`Required environment variable ${name} is missing`)
+    }
+
+    return value
+}
+
+const baseUrl = requiredEnv('BASE_URL')
+const token = requiredEnv('API_TOKEN')
 
 /*export const apiConfig = {
     baseUrl,
@@ -43,6 +51,9 @@ export function logApiRequest(
     url: string,
     body: unknown
 ) {
+    const safeUrl = new URL(url)
+    safeUrl.searchParams.set('h', '***')
+
     console.log('REQUEST_URL', url)
     console.log('REQUEST_BODY', JSON.stringify(body, null, 2))
 }
