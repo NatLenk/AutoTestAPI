@@ -229,3 +229,10 @@ export async function addManualBonus(
 
     expect(responseBody.result_code).toBe(0)
 }
+
+//Функция построения тела getclientcards
+export function buildGetClientCardsBody(clientId: number): Types.GetClientCards {
+    return {
+        client_id: clientId
+    }
+}
