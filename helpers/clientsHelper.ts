@@ -12,16 +12,7 @@ export const getClientCardsUrl = api.buildLoadUrl('getclientcards')
 export function buildAddClientBody(phone: string, clientId: number | null): Types.AddClientRequestBody {
     return {
         client_id: clientId,
-        phone: phone,
-        first_name: 'Test',
-        middle_name: 'v1',
-        last_name: 'Autotest',
-        birth_date: '26.03.1999',
-        sex: 1,
-        email: `autotest${Date.now()}@test.ru`,
-        shift_open_dt: api.getLocalDateTime(),
-        not_to_send_email: 1,
-        not_to_send_sms: 1
+        phone: phone
     }
 }
 
