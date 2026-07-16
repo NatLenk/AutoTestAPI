@@ -35,3 +35,17 @@ export function logApiResponse(
     console.log('STATUS', response.status())
     console.log('RESPONSE_BODY', JSON.stringify(responseBody, null, 2))
 }
+
+//Функция получение локальной даты компьютера
+export function getLocalDateTime(date = new Date()): string {
+    const pad = (value: number): string => value.toString().padStart(2, '0')
+
+    const day = pad(date.getDate())
+    const month = pad(date.getMonth() + 1)
+    const year = date.getFullYear()
+    const hours = pad(date.getHours())
+    const minutes = pad(date.getMinutes())
+    const seconds = pad(date.getSeconds())
+
+    return `${hours}:${minutes}:${seconds} ${day}.${month}.${year}`
+}

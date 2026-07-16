@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import * as helper from '../helpers/clientHelper'
+import * as helper from '../../helpers/clientsHelper'
 
 test('Проверка баланса нового клиента', async ({ request }) => {
     const { clientId } = await helper.createTestClient(request)

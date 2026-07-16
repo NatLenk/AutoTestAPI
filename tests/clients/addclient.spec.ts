@@ -1,6 +1,6 @@
 import { test, expect, APIRequestContext } from '@playwright/test'
-import * as helper from '../helpers/clientHelper'
-import * as api from '../api.config'
+import * as helper from '../../helpers/clientsHelper'
+import * as api from '../../api.config'
 
 test('Валидный addclient - добавление клиента', async ({ request }) => {
     const phone = await helper.findUnusedPhone(request)

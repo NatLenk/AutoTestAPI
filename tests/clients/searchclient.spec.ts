@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test'
-import * as api from '../api.config'
-import * as helper from '../helpers/clientHelper'
+import * as api from '../../api.config'
+import * as helper from '../../helpers/clientsHelper'
 
 
 //Тест searchclient валидный

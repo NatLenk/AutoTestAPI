@@ -6,6 +6,7 @@ export const searchClientUrl = api.buildLoadUrl('searchclient')
 export const addClientUrl = api.buildLoadUrl('addclient')
 export const getClientFullBalanceUrl = api.buildLoadUrl('getclientfullbalance')
 export const manualAddUrl = api.buildLoadUrl('manualadd')
+export const getClientCardsUrl = api.buildLoadUrl('getclientcards')
 
 //Функция создания тела запроса addclient
 export function buildAddClientBody(phone: string, clientId: number | null): Types.AddClientRequestBody {
@@ -18,7 +19,7 @@ export function buildAddClientBody(phone: string, clientId: number | null): Type
         birth_date: '26.03.1999',
         sex: 1,
         email: `autotest${Date.now()}@test.ru`,
-        shift_open_dt: getLocalDateTime(),
+        shift_open_dt: api.getLocalDateTime(),
         not_to_send_email: 1,
         not_to_send_sms: 1
     }
@@ -108,20 +109,6 @@ export async function createTestClient(
     }
 }
 
-//Функция получение локальной даты компьютера
-export function getLocalDateTime(date = new Date()): string {
-    const pad = (value: number): string => value.toString().padStart(2, '0')
-
-    const day = pad(date.getDate())
-    const month = pad(date.getMonth() + 1)
-    const year = date.getFullYear()
-    const hours = pad(date.getHours())
-    const minutes = pad(date.getMinutes())
-    const seconds = pad(date.getSeconds())
-
-    return `${hours}:${minutes}:${seconds} ${day}.${month}.${year}`
-}
-
 //Функция генерации телефонного номера
 export function generateClientPhone(): string {
     let phoneNumber = `79`
@@ -176,7 +163,7 @@ export function buildSearchClientBody(phone: string): Types.SearchClientRequestB
                 }
             ]
         },
-        card_apply_dt: getLocalDateTime(),
+        card_apply_dt: api.getLocalDateTime(),
         full_data: false,
         pos_discounts_are_used: 0
     }
