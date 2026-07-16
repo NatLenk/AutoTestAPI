@@ -7,6 +7,7 @@ export const addClientUrl = api.buildLoadUrl('addclient')
 export const getClientFullBalanceUrl = api.buildLoadUrl('getclientfullbalance')
 export const manualAddUrl = api.buildLoadUrl('manualadd')
 export const getClientCardsUrl = api.buildLoadUrl('getclientcards')
+export const replaceCardUrl = api.buildLoadUrl('replacecard')
 
 //Функция создания тела запроса addclient
 export function buildAddClientBody(phone: string, clientId: number | null): Types.AddClientRequestBody {
@@ -233,6 +234,16 @@ export async function addManualBonus(
 //Функция построения тела getclientcards
 export function buildGetClientCardsBody(clientId: number): Types.GetClientCards {
     return {
+        client_id: clientId
+    }
+}
+
+
+//Функция построения тела replacecard
+export function buildReplaceCardBody(searchMode: 0 | 1, searchValue: string, clientId: number): Types.ReplaceCard {
+    return {
+        search_mode: searchMode,
+        search_value: searchValue,
         client_id: clientId
     }
 }
