@@ -4,7 +4,7 @@ import * as api from '../../api.config'
 
 test('Валидный replacecard', async ({ request }) => {
     const phone = await helper.findUnusedPhone(request)
-    const cardCode = `999${Date.now()}`
+    const cardCode = helper.generateCardCode()
     const cardBarcode = cardCode
     const body = {
         ...helper.buildAddClientBody(phone, null),
@@ -24,7 +24,7 @@ test('Валидный replacecard', async ({ request }) => {
     }
 
     const searchMode = 0
-    const searchValue = cardCode
+    const searchValue = (Number(cardCode) + 1).toString()
     const replaceCardBody = await helper.buildReplaceCardBody(searchMode, searchValue, clientId)
     const replaceCardResponse = await request.post(helper.replaceCardUrl, {
         data: replaceCardBody

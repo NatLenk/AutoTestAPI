@@ -247,3 +247,12 @@ export function buildReplaceCardBody(searchMode: 0 | 1, searchValue: string, cli
         client_id: clientId
     }
 }
+
+//Функция генерации кода карты из тестового диапазона
+export function generateCardCode(): string {
+    const firstCardNumber = 99_900_000_000
+    const availablePairs = 99_999_999
+    const cardNumber = firstCardNumber + Date.now() % availablePairs
+
+    return cardNumber.toString()
+}

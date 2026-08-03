@@ -39,3 +39,5 @@ if (existsSync(localEnvironmentPath)) {
 **npx playwright test tests/searchclient.spec.ts** - запуск конкретного файла содержащего тесты
 
 **npx playwright test searchclient** - запуск всех тестов содержащих в названии searchclient
+
+Для запуска тестов также нужно в личном кабинете создать диапазон карт от 99900000000 до 99999999999
