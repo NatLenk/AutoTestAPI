@@ -8,6 +8,8 @@ export const getClientFullBalanceUrl = api.buildLoadUrl('getclientfullbalance')
 export const manualAddUrl = api.buildLoadUrl('manualadd')
 export const getClientCardsUrl = api.buildLoadUrl('getclientcards')
 export const replaceCardUrl = api.buildLoadUrl('replacecard')
+export const blockCardUrl = api.buildLoadUrl('blockcard')
+export const getConfirmationCodeUrl = api.buildLoadUrl('getconfirmationcode')
 
 //Функция создания тела запроса addclient
 export function buildAddClientBody(phone: string, clientId: number | null): Types.AddClientRequestBody {
@@ -255,4 +257,54 @@ export function generateCardCode(): string {
     const cardNumber = firstCardNumber + Date.now() % availablePairs
 
     return cardNumber.toString()
+}
+
+//Функция построения тела blockcard
+export function buildBlockCardBody(card_id: number): Types.BlockCard {
+    return {
+        card_id: card_id
+    }
+}
+
+//Функция поиска card_id
+export async function searchCardId(request: APIRequestContext,
+    phone: string
+): Promise<number | null> {
+    const body: Types.SearchClientRequestBody = {
+        search_mode: 0,
+        search_value: phone
+    }
+
+    const response = await request.post(searchClientUrl, {
+        data: body
+    })
+
+    expect(response.status()).toBe(200)
+
+    const responseBody = await response.json() as Types.SearchClientResponseBody
+
+    api.logApiRequest(searchClientUrl, body)
+    api.logApiResponse(response, responseBody)
+
+    if (responseBody.card_id === null) {
+        return null
+    }
+
+    const cardId = Number(responseBody.card_id)
+
+    if (!Number.isSafeInteger(cardId)) {
+        throw new Error(
+            `Некорректный card_id: ${responseBody.card_id}`
+        )
+    }
+
+    return cardId
+}
+
+//Функция построения тела getconfirmationcode
+export function buildGetConfirmationCodeBody(clientId: number, outerSystemsInterfaceType: 5): Types.GetConfirmationCode {
+    return {
+        client_id: clientId,
+        outer_systems_interface_type: outerSystemsInterfaceType
+    }
 }

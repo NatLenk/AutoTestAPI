@@ -43,6 +43,10 @@ export type SearchClientRequestBody = {
 export type SearchClientResponseBody = {
     state: null | 0 | 1 | 2 | 3 | 4
     client_id: string | null
+    card_id: string | null
+    card_state: 0 | 2 | 3 | null
+    card_code: string | null
+    card_barcode: string | null
 }
 
 //Типизирование тела запроса addclient
@@ -100,9 +104,15 @@ export type BlockCard = {
     card_id: number
 }
 
+//Типизирование тела ответа blockcard
+export type BlockCardResponseBody = {
+    result_code: string | number
+    result_text: string
+}
+
 //Типизирование тела запроса getconfirmationcode
 export type GetConfirmationCode = {
-    client_id: number,
+    client_id: number
     outer_systems_interface_type: 5
 }
 
