@@ -11,7 +11,7 @@ export const getMovesByClientUrl = api.buildLoadUrl('getmovesbyclient')
 export const getDetailingByMoveUrl = api.buildLoadUrl('getdetailingbymove')
 
 //Функция построения тела запроса processsale
-export function buildProcesssaleBody(clientId: number | null, type: 0 | 1, bonusOut: number, maxBonusOut: number): Types.ProcessSale {
+export function buildProcessSaleBody(clientId: number | null, type: 0 | 1, bonusOut: number, maxBonusOut: number, overrides: Partial<Types.ProcessSale> = {}): Types.ProcessSale {
     return {
         client_id: clientId,
         type,
@@ -19,7 +19,29 @@ export function buildProcesssaleBody(clientId: number | null, type: 0 | 1, bonus
         max_bonus_out: maxBonusOut,
         goods_data: helperClient.buildGoodsData(),
         move_id: randomUUID(),
-        doc_open_dt: api.getLocalDateTime()
+        doc_open_dt: api.getLocalDateTime(),
+        ...overrides
+    }
+}
+
+//Функция отправки запроса processsale
+export async function processSale(request: APIRequestContext, clientId: number | null, overrides: Partial<Types.ProcessSale> = {}) {
+    const body = buildProcessSaleBody(clientId, 0, 0, 0, overrides)
+
+    api.logApiRequest(processsaleUrl, body)
+
+    const response = await request.post(processsaleUrl, {
+        data: body
+    })
+
+    const responseBody = await response.json()
+
+    api.logApiResponse(response, responseBody)
+
+    return {
+        body,
+        response,
+        responseBody
     }
 }
 
