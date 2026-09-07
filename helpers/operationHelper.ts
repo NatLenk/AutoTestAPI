@@ -113,6 +113,27 @@ export function buildGetMovesByClientBody(clientId: number): Types.GetMovesByCli
     }
 }
 
+//Функция отправки запроса getmovesbyclient
+export async function getmovesbyclient(request: APIRequestContext, clientId: number) {
+    const body = buildGetMovesByClientBody(clientId)
+
+    api.logApiRequest(getMovesByClientUrl, body)
+
+    const response = await request.post(getMovesByClientUrl, {
+        data: body
+    })
+
+    const responseBody = await response.json()
+
+    api.logApiResponse(response, responseBody)
+
+    return {
+        body,
+        response,
+        responseBody
+    }
+}
+
 //Функция построения тела запроса getdetailingbymove
 export function buildGetDetailingByMoveBody(moveId: string): Types.GetDetailingByMove {
     return {
