@@ -10,3 +10,10 @@ test('Валидный processsale', async ({ request }) => {
 
     expect(processSale.response.status()).toBe(200)
 })
+
+test('Валидный processsale - без клиента', async ({ request }) => {
+
+    const processSale = await helperOperation.processSale(request, null)
+
+    expect(processSale.response.status()).toBe(200)
+})

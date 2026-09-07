@@ -55,9 +55,32 @@ export function buildConfirmsaleBody(moveId: string, docOpenDt: string): Types.C
 }
 
 //Функция построения тела запроса manualadd
-export function buildManualAddBody(clientId: number): Types.ManualAdd {
+export function buildManualAddBody(clientId: number, overrides: Partial<Types.ManualAdd> = {}): Types.ManualAdd {
     return {
-        client_id: clientId
+        client_id: clientId,
+        ...overrides
+    }
+}
+
+
+//Функция отправки запроса manualadd
+export async function manualAdd(request: APIRequestContext, clientId: number, overrides: Partial<Types.ManualAdd> = {}) {
+    const body = buildManualAddBody(clientId, overrides)
+
+    api.logApiRequest(manualaddUrl, body)
+
+    const response = await request.post(manualaddUrl, {
+        data: body
+    })
+
+    const responseBody = await response.json()
+
+    api.logApiResponse(response, responseBody)
+
+    return {
+        body,
+        response,
+        responseBody
     }
 }
 
