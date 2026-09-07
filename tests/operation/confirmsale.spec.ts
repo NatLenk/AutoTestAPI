@@ -10,17 +10,7 @@ test('Валидный confirmsale', async ({ request }) => {
 
     expect(processSale.response.status()).toBe(200)
 
-    const confirmSaleBody = helperOperation.buildConfirmsaleBody(processSale.body.move_id, processSale.body.doc_open_dt)
+    const confirmSale = await helperOperation.confirmsale(request, processSale.body.move_id, processSale.body.doc_open_dt)
 
-    api.logApiRequest(helperOperation.confirmsaleUrl, confirmSaleBody)
-
-    const confirmSaleResponse = await request.post(helperOperation.confirmsaleUrl, {
-        data: confirmSaleBody
-    })
-
-    expect(confirmSaleResponse.status()).toBe(200)
-
-    const confirmSaleResponseBody = await confirmSaleResponse.json()
-
-    api.logApiResponse(confirmSaleResponse, confirmSaleResponseBody)
+    expect(confirmSale.response.status()).toBe(200)
 })

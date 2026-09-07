@@ -46,11 +46,33 @@ export async function processSale(request: APIRequestContext, clientId: number |
 }
 
 //Функция построения тела запроса confirmsale
-export function buildConfirmsaleBody(moveId: string, docOpenDt: string): Types.ConfirmSale {
+export function buildConfirmsaleBody(moveId: string, docOpenDt: string, overrides: Partial<Types.ConfirmSale> = {}): Types.ConfirmSale {
     return {
         move_id: moveId,
         doc_open_dt: docOpenDt,
-        doc_dt: api.getLocalDateTime()
+        doc_dt: api.getLocalDateTime(),
+        ...overrides
+    }
+}
+
+//Функция отправки запроса confirmsale
+export async function confirmsale(request: APIRequestContext, moveId: string, docOpenDt: string, overrides: Partial<Types.ConfirmSale> = {}) {
+    const body = buildConfirmsaleBody(moveId, docOpenDt, overrides)
+
+    api.logApiRequest(confirmsaleUrl, body)
+
+    const response = await request.post(confirmsaleUrl, {
+        data: body
+    })
+
+    const responseBody = await response.json()
+
+    api.logApiResponse(response, responseBody)
+
+    return {
+        body,
+        response,
+        responseBody
     }
 }
 
