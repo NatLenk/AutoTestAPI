@@ -209,11 +209,9 @@ export type GetMovesByClient = {
 }
 
 //Типизирование тела запроса getdetailingbymove
-export type GetDetailingByMove = {
-    id?: number,
-    move_id?: string,
-    move_date?: string
-}
+export type GetDetailingByMove =
+    | { id: number; move_id?: string; move_date?: string }
+    | { id?: number; move_id: string; move_date?: string }
 
 //Типизирование тела запроса askconfirmphone
 export type AskConfirmPhone = {

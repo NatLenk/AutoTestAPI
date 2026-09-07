@@ -135,8 +135,29 @@ export async function getmovesbyclient(request: APIRequestContext, clientId: num
 }
 
 //Функция построения тела запроса getdetailingbymove
-export function buildGetDetailingByMoveBody(moveId: string): Types.GetDetailingByMove {
+export function buildGetDetailingByMoveBody(params: Types.GetDetailingByMove): Types.GetDetailingByMove {
     return {
-        move_id: moveId
+        ...params
+    }
+}
+
+//Функция отправки запроса getdetailingbymove
+export async function getdetailingbymove(request: APIRequestContext, params: Types.GetDetailingByMove) {
+    const body = buildGetDetailingByMoveBody(params)
+
+    api.logApiRequest(getDetailingByMoveUrl, body)
+
+    const response = await request.post(getDetailingByMoveUrl, {
+        data: body
+    })
+
+    const responseBody = await response.json()
+
+    api.logApiResponse(response, responseBody)
+
+    return {
+        body,
+        response,
+        responseBody
     }
 }
