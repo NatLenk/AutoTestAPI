@@ -27,7 +27,7 @@ export async function searchPromocode(request: APIRequestContext, promoCode: str
         data: body
     })
 
-    const responseBody = response.json()
+    const responseBody = await response.json()
     api.logApiResponse(response, responseBody)
 
     return {
@@ -58,7 +58,7 @@ export async function reservedPromocode(request: APIRequestContext, promoCode: s
         data: body
     })
 
-    const responseBody = response.json()
+    const responseBody = await response.json()
     api.logApiResponse(response, responseBody)
 
     return {
@@ -69,25 +69,25 @@ export async function reservedPromocode(request: APIRequestContext, promoCode: s
 
 }
 //Функция построения тела generate_promocode
-export function buildGenerate_PromocodeBody(listId: number): Types.Generate_PromoCode {
+export function buildGenerate_PromocodeBody(): Types.Generate_PromoCode {
 
     return {
-        list_id: listId
+        list_id: 999
     }
 
 }
 
 //Функция отправки запроса generate_promocode
-export async function generate_Promocode(request: APIRequestContext, listId: number) {
+export async function generate_Promocode(request: APIRequestContext) {
 
-    const body = buildGenerate_PromocodeBody(listId)
+    const body = buildGenerate_PromocodeBody()
 
     api.logApiRequest(generate_promocodeUrl, body)
     const response = await request.post(generate_promocodeUrl, {
         data: body
     })
 
-    const responseBody = response.json()
+    const responseBody = await response.json()
     api.logApiResponse(response, responseBody)
 
     return {
@@ -95,5 +95,18 @@ export async function generate_Promocode(request: APIRequestContext, listId: num
         response,
         responseBody
     }
+
+}
+
+//Функция генерации промокода из тестового диапазона
+export function generatePromocode(): string {
+
+    const firstPromocodeNumber = 99_900_000_000
+
+    const availablePairs = 99_999_999
+
+    const promocodeNumber = firstPromocodeNumber + Date.now() % availablePairs
+
+    return promocodeNumber.toString()
 
 }
