@@ -5,13 +5,18 @@ import * as helperClient from '../helpers/clientsHelper'
 import { randomUUID } from 'node:crypto'
 
 export const processsaleUrl = api.buildLoadUrl('processsale')
+
 export const confirmsaleUrl = api.buildLoadUrl('confirmsale')
+
 export const manualaddUrl = api.buildLoadUrl('manualadd')
+
 export const getMovesByClientUrl = api.buildLoadUrl('getmovesbyclient')
+
 export const getDetailingByMoveUrl = api.buildLoadUrl('getdetailingbymove')
 
 //Функция построения тела запроса processsale
 export function buildProcessSaleBody(clientId: number | null, type: 0 | 1, bonusOut: number, maxBonusOut: number, overrides: Partial<Types.ProcessSale> = {}): Types.ProcessSale {
+
     return {
         client_id: clientId,
         type,
@@ -22,20 +27,20 @@ export function buildProcessSaleBody(clientId: number | null, type: 0 | 1, bonus
         doc_open_dt: api.getLocalDateTime(),
         ...overrides
     }
+
 }
 
 //Функция отправки запроса processsale
 export async function processSale(request: APIRequestContext, clientId: number | null, overrides: Partial<Types.ProcessSale> = {}) {
+
     const body = buildProcessSaleBody(clientId, 0, 0, 0, overrides)
 
     api.logApiRequest(processsaleUrl, body)
-
     const response = await request.post(processsaleUrl, {
         data: body
     })
 
     const responseBody = await response.json()
-
     api.logApiResponse(response, responseBody)
 
     return {
@@ -43,30 +48,32 @@ export async function processSale(request: APIRequestContext, clientId: number |
         response,
         responseBody
     }
+
 }
 
 //Функция построения тела запроса confirmsale
 export function buildConfirmsaleBody(moveId: string, docOpenDt: string, overrides: Partial<Types.ConfirmSale> = {}): Types.ConfirmSale {
+
     return {
         move_id: moveId,
         doc_open_dt: docOpenDt,
         doc_dt: api.getLocalDateTime(),
         ...overrides
     }
+
 }
 
 //Функция отправки запроса confirmsale
 export async function confirmsale(request: APIRequestContext, moveId: string, docOpenDt: string, overrides: Partial<Types.ConfirmSale> = {}) {
+
     const body = buildConfirmsaleBody(moveId, docOpenDt, overrides)
 
     api.logApiRequest(confirmsaleUrl, body)
-
     const response = await request.post(confirmsaleUrl, {
         data: body
     })
 
     const responseBody = await response.json()
-
     api.logApiResponse(response, responseBody)
 
     return {
@@ -74,14 +81,17 @@ export async function confirmsale(request: APIRequestContext, moveId: string, do
         response,
         responseBody
     }
+
 }
 
 //Функция построения тела запроса manualadd
 export function buildManualAddBody(clientId: number, overrides: Partial<Types.ManualAdd> = {}): Types.ManualAdd {
+
     return {
         client_id: clientId,
         ...overrides
     }
+
 }
 
 
@@ -108,23 +118,24 @@ export async function manualAdd(request: APIRequestContext, clientId: number, ov
 
 //Функция построения тела запроса getmovesbyclient
 export function buildGetMovesByClientBody(clientId: number): Types.GetMovesByClient {
+
     return {
         client_id: clientId
     }
+
 }
 
 //Функция отправки запроса getmovesbyclient
 export async function getmovesbyclient(request: APIRequestContext, clientId: number) {
+
     const body = buildGetMovesByClientBody(clientId)
 
     api.logApiRequest(getMovesByClientUrl, body)
-
     const response = await request.post(getMovesByClientUrl, {
         data: body
     })
 
     const responseBody = await response.json()
-
     api.logApiResponse(response, responseBody)
 
     return {
@@ -132,27 +143,29 @@ export async function getmovesbyclient(request: APIRequestContext, clientId: num
         response,
         responseBody
     }
+
 }
 
 //Функция построения тела запроса getdetailingbymove
 export function buildGetDetailingByMoveBody(params: Types.GetDetailingByMove): Types.GetDetailingByMove {
+
     return {
         ...params
     }
+
 }
 
 //Функция отправки запроса getdetailingbymove
 export async function getdetailingbymove(request: APIRequestContext, params: Types.GetDetailingByMove) {
+
     const body = buildGetDetailingByMoveBody(params)
 
     api.logApiRequest(getDetailingByMoveUrl, body)
-
     const response = await request.post(getDetailingByMoveUrl, {
         data: body
     })
 
     const responseBody = await response.json()
-
     api.logApiResponse(response, responseBody)
 
     return {
@@ -160,4 +173,5 @@ export async function getdetailingbymove(request: APIRequestContext, params: Typ
         response,
         responseBody
     }
+
 }
