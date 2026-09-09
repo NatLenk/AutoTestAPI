@@ -1,7 +1,6 @@
 import { APIRequestContext } from '@playwright/test'
 import * as api from '../api.config'
 import type * as Types from '../types/RequestTypes'
-import { isModuleBody } from 'typescript'
 
 export const getListTagsUrl = api.buildLoadUrl('getlisttags')
 export const getClientTagsUrl = api.buildLoadUrl('getclienttags')
