@@ -1,4 +1,4 @@
-import { test, expect, APIRequestContext } from '@playwright/test'
+import { test, expect } from '@playwright/test'
 import * as tagsHelper from '../../helpers/tagsHelper'
 
 test('Валидный тест Получение списка тегов', async ({ request }) => {
