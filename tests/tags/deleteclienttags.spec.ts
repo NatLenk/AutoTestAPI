@@ -1,15 +1,15 @@
 import { test, expect } from '@playwright/test'
-import * as helper from '../../helpers/clientsHelper'
+import * as clientsHelper from '../../helpers/clientsHelper'
 import * as api from '../../api.config'
-import * as helperTags from '../../helpers/tagsHelper'
+import * as tagsHelper from '../../helpers/tagsHelper'
 
 test('Валидный тест Удаление тегов клиента', async ({ request }) => {
 
-    const { clientId } = await helper.createTestClient(request)
+    const { clientId } = await clientsHelper.createTestClient(request)
 
-    const getListTagsBody = helperTags.buildGetListTagsBody(null)
+    const getListTagsBody = tagsHelper.buildGetListTagsBody(null)
 
-    const getListTagsResponse = await request.post(helperTags.getListTagsUrl, {
+    const getListTagsResponse = await request.post(tagsHelper.getListTagsUrl, {
         data: getListTagsBody
     })
 
@@ -19,17 +19,17 @@ test('Валидный тест Удаление тегов клиента', asy
 
     const tagId = getListTagsResponseBody.tags_list[0].tag_id
 
-    const addClientTagsBody = helperTags.buildAddClientTagsBody(clientId, [tagId])
+    const addClientTagsBody = tagsHelper.buildAddClientTagsBody(clientId, [tagId])
 
-    const addClientTagsResponse = await request.post(helperTags.addClientTagsUrl, {
+    const addClientTagsResponse = await request.post(tagsHelper.addClientTagsUrl, {
         data: addClientTagsBody
     })
 
     expect(addClientTagsResponse.status()).toBe(200)
 
-    const deleteClientTagsBody = helperTags.buildDeleteClientTagsBody(clientId, [tagId])
+    const deleteClientTagsBody = tagsHelper.buildDeleteClientTagsBody(clientId, [tagId])
 
-    const deleteClientTagsResponse = await request.post(helperTags.deleteClientTagsUrl, {
+    const deleteClientTagsResponse = await request.post(tagsHelper.deleteClientTagsUrl, {
         data: deleteClientTagsBody
     })
 
@@ -37,6 +37,6 @@ test('Валидный тест Удаление тегов клиента', asy
 
     const deleteClientTagsResponseBody = await deleteClientTagsResponse.json()
 
-    api.logApiRequest(helperTags.deleteClientTagsUrl, deleteClientTagsBody)
+    api.logApiRequest(tagsHelper.deleteClientTagsUrl, deleteClientTagsBody)
     api.logApiResponse(deleteClientTagsResponse, deleteClientTagsResponseBody)
 })

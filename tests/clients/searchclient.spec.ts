@@ -1,13 +1,13 @@
 import { test, expect } from '@playwright/test'
 import * as api from '../../api.config'
-import * as helper from '../../helpers/clientsHelper'
+import * as clientsHelper from '../../helpers/clientsHelper'
 
 
 //Тест searchclient валидный
 test('Валидный searchclient', async ({ request }) => {
-    let phone = helper.generateClientPhone()
-    let body = helper.buildSearchClientBody(phone)
-    let response = await request.post(helper.searchClientUrl, {
+    let phone = clientsHelper.generateClientPhone()
+    let body = clientsHelper.buildSearchClientBody(phone)
+    let response = await request.post(clientsHelper.searchClientUrl, {
         data: body
     })
 
@@ -26,7 +26,7 @@ test('Валидный searchclient', async ({ request }) => {
         responseBody = await response.json()
     }*/
 
-    api.logApiRequest(helper.searchClientUrl, body)
+    api.logApiRequest(clientsHelper.searchClientUrl, body)
     api.logApiResponse(response, responseBody)
 })
 

@@ -1,36 +1,36 @@
 import { test, expect } from '@playwright/test'
-import * as helper from '../../helpers/clientsHelper'
+import * as clientsHelper from '../../helpers/clientsHelper'
 import * as api from '../../api.config'
 
 test('Валидный blockcard', async ({ request }) => {
-    const phone = await helper.findUnusedPhone(request)
-    const cardCode = helper.generateCardCode()
+    const phone = await clientsHelper.findUnusedPhone(request)
+    const cardCode = clientsHelper.generateCardCode()
     const cardBarcode = cardCode
     const body = {
-        ...helper.buildAddClientBody(phone, null),
+        ...clientsHelper.buildAddClientBody(phone, null),
         card_code: cardCode,
         card_barcode: cardBarcode
     }
 
-    const addClientResponse = await request.post(helper.addClientUrl, {
+    const addClientResponse = await request.post(clientsHelper.addClientUrl, {
         data: body
     })
 
     expect(addClientResponse.status()).toBe(200)
 
-    const cardId = await helper.searchCardId(request, phone)
+    const cardId = await clientsHelper.searchCardId(request, phone)
     if (cardId === null) {
         throw new Error('Карта не найдена у клиента')
     }
 
-    const blockCardBody = helper.buildBlockCardBody(cardId)
-    const blockCardResponse = await request.post(helper.blockCardUrl, {
+    const blockCardBody = clientsHelper.buildBlockCardBody(cardId)
+    const blockCardResponse = await request.post(clientsHelper.blockCardUrl, {
         data: blockCardBody
     })
 
     expect(blockCardResponse.status()).toBe(200)
 
     const blockCardResponseBody = await blockCardResponse.json()
-    api.logApiRequest(helper.blockCardUrl, blockCardBody)
+    api.logApiRequest(clientsHelper.blockCardUrl, blockCardBody)
     api.logApiResponse(blockCardResponse, blockCardResponseBody)
 })

@@ -1,15 +1,15 @@
 import { test, expect } from '@playwright/test'
-import * as helper from '../../helpers/clientsHelper'
+import * as clientsHelper from '../../helpers/clientsHelper'
 import * as api from '../../api.config'
-import * as helperTags from '../../helpers/tagsHelper'
+import * as tagsHelper from '../../helpers/tagsHelper'
 
 test('Валидный тест Получить список тегов клиента', async ({ request }) => {
 
-    const { clientId } = await helper.createTestClient(request)
+    const { clientId } = await clientsHelper.createTestClient(request)
 
-    const getListTagsBody = helperTags.buildGetListTagsBody(null)
+    const getListTagsBody = tagsHelper.buildGetListTagsBody(null)
 
-    const getListTagsResponse = await request.post(helperTags.getListTagsUrl, {
+    const getListTagsResponse = await request.post(tagsHelper.getListTagsUrl, {
         data: getListTagsBody
     })
 
@@ -19,17 +19,17 @@ test('Валидный тест Получить список тегов кли�
 
     const tagId = getListTagsResponseBody.tags_list[0].tag_id
 
-    const addClientTagsBody = helperTags.buildAddClientTagsBody(clientId, [tagId])
+    const addClientTagsBody = tagsHelper.buildAddClientTagsBody(clientId, [tagId])
 
-    const addClientTagsResponse = await request.post(helperTags.addClientTagsUrl, {
+    const addClientTagsResponse = await request.post(tagsHelper.addClientTagsUrl, {
         data: addClientTagsBody
     })
 
     expect(addClientTagsResponse.status()).toBe(200)
 
-    const getClientTagsBody = helperTags.buildGetClientTagsBody(clientId)
+    const getClientTagsBody = tagsHelper.buildGetClientTagsBody(clientId)
 
-    const getClientTagsResponse = await request.post(helperTags.getClientTagsUrl, {
+    const getClientTagsResponse = await request.post(tagsHelper.getClientTagsUrl, {
         data: getClientTagsBody
     })
 
@@ -39,6 +39,6 @@ test('Валидный тест Получить список тегов кли�
 
     expect(getClientTagsResponseBody.data).toContain(tagId)
 
-    api.logApiRequest(helperTags.getClientTagsUrl, getClientTagsBody)
+    api.logApiRequest(tagsHelper.getClientTagsUrl, getClientTagsBody)
     api.logApiResponse(getClientTagsResponse, getClientTagsResponseBody)
 })

@@ -1,13 +1,13 @@
 import { test, expect, APIRequestContext } from '@playwright/test'
-import * as helper from '../../helpers/clientsHelper'
+import * as clientsHelper from '../../helpers/clientsHelper'
 import * as api from '../../api.config'
-import * as helperTags from '../../helpers/tagsHelper'
+import * as tagsHelper from '../../helpers/tagsHelper'
 
 test('Валидный тест Получение списка тегов', async ({ request }) => {
 
-    const getListTagsBody = helperTags.buildGetListTagsBody(null)
+    const getListTagsBody = tagsHelper.buildGetListTagsBody(null)
 
-    const getListTagsResponse = await request.post(helperTags.getListTagsUrl, {
+    const getListTagsResponse = await request.post(tagsHelper.getListTagsUrl, {
         data: getListTagsBody
     })
 
@@ -15,6 +15,6 @@ test('Валидный тест Получение списка тегов', asy
 
     const getListTagsResponseBody = await getListTagsResponse.json()
 
-    api.logApiRequest(helperTags.getListTagsUrl, getListTagsBody)
+    api.logApiRequest(tagsHelper.getListTagsUrl, getListTagsBody)
     api.logApiResponse(getListTagsResponse, getListTagsResponseBody)
 })

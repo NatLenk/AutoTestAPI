@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test'
-import * as helper from '../../helpers/clientsHelper'
+import * as clientsHelper from '../../helpers/clientsHelper'
 
 test('Проверка баланса нового клиента', async ({ request }) => {
-    const { clientId } = await helper.createTestClient(request)
-    const totalBalance = await helper.getClientBalance(request, clientId)
+    const { clientId } = await clientsHelper.createTestClient(request)
+    const totalBalance = await clientsHelper.getClientBalance(request, clientId)
 
     expect(Number.isFinite(totalBalance)).toBe(true)
 })
@@ -11,17 +11,17 @@ test('Проверка баланса нового клиента', async ({ req
 test('Проверка изменения баланса после ручного начисления', async ({ request }) => {
     const bonusAmount = 10
 
-    const { clientId } = await helper.createTestClient(request)
+    const { clientId } = await clientsHelper.createTestClient(request)
 
-    const balanceBefore = await helper.getClientBalance(request, clientId)
+    const balanceBefore = await clientsHelper.getClientBalance(request, clientId)
 
-    await helper.addManualBonus(
+    await clientsHelper.addManualBonus(
         request,
         clientId,
         bonusAmount
     )
 
-    const balanceAfter = await helper.getClientBalance(request, clientId)
+    const balanceAfter = await clientsHelper.getClientBalance(request, clientId)
 
     expect(balanceAfter - balanceBefore).toBeCloseTo(bonusAmount, 2)
 })

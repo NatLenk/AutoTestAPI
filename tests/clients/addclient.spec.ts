@@ -1,13 +1,13 @@
 import { test, expect, APIRequestContext } from '@playwright/test'
-import * as helper from '../../helpers/clientsHelper'
+import * as clientsHelper from '../../helpers/clientsHelper'
 import * as api from '../../api.config'
 
 test('Валидный addclient - добавление клиента', async ({ request }) => {
-    const phone = await helper.findUnusedPhone(request)
+    const phone = await clientsHelper.findUnusedPhone(request)
 
-    const addClientBody = helper.buildAddClientBody(phone, null)
+    const addClientBody = clientsHelper.buildAddClientBody(phone, null)
 
-    const addClientResponse = await request.post(helper.addClientUrl, {
+    const addClientResponse = await request.post(clientsHelper.addClientUrl, {
         data: addClientBody
     })
 
@@ -15,24 +15,24 @@ test('Валидный addclient - добавление клиента', async (
 
     const addClientResponseBody = await addClientResponse.json()
 
-    api.logApiRequest(helper.addClientUrl, addClientBody)
+    api.logApiRequest(clientsHelper.addClientUrl, addClientBody)
     api.logApiResponse(addClientResponse, addClientResponseBody)
 
-    const createdClientId = await helper.searchClientId(request, phone)
+    const createdClientId = await clientsHelper.searchClientId(request, phone)
 
     expect(createdClientId).not.toBeNull()
 })
 
 test('Валидный addclient - обновление клиента', async ({ request }) => {
-    const { phone, clientId } = await helper.createTestClient(request)
+    const { phone, clientId } = await clientsHelper.createTestClient(request)
 
     const updateBody = {
-        ...helper.buildAddClientBody(phone, clientId),
+        ...clientsHelper.buildAddClientBody(phone, clientId),
         middle_name: 'v2',
         email: `updated${Date.now()}@test.ru`
     }
 
-    const addClientResponse = await request.post(helper.addClientUrl, {
+    const addClientResponse = await request.post(clientsHelper.addClientUrl, {
         data: updateBody
     })
 
@@ -40,6 +40,6 @@ test('Валидный addclient - обновление клиента', async (
 
     const addClientResponseBody = await addClientResponse.json()
 
-    api.logApiRequest(helper.addClientUrl, updateBody)
+    api.logApiRequest(clientsHelper.addClientUrl, updateBody)
     api.logApiResponse(addClientResponse, addClientResponseBody)
 })

@@ -1,15 +1,15 @@
 import { test, expect } from '@playwright/test'
-import * as helper from '../../helpers/clientsHelper'
+import * as clientsHelper from '../../helpers/clientsHelper'
 import * as api from '../../api.config'
-import * as helperTags from '../../helpers/tagsHelper'
+import * as tagsHelper from '../../helpers/tagsHelper'
 
 test('Валидный тест Добавить теги клиенту', async ({ request }) => {
 
-    const { clientId } = await helper.createTestClient(request)
+    const { clientId } = await clientsHelper.createTestClient(request)
 
-    const getListTagsBody = helperTags.buildGetListTagsBody(null)
+    const getListTagsBody = tagsHelper.buildGetListTagsBody(null)
 
-    const getListTagsResponse = await request.post(helperTags.getListTagsUrl, {
+    const getListTagsResponse = await request.post(tagsHelper.getListTagsUrl, {
         data: getListTagsBody
     })
 
@@ -19,9 +19,9 @@ test('Валидный тест Добавить теги клиенту', async
 
     const tagId = getListTagsResponseBody.tags_list[0].tag_id
 
-    const addClientTagsBody = helperTags.buildAddClientTagsBody(clientId, [tagId])
+    const addClientTagsBody = tagsHelper.buildAddClientTagsBody(clientId, [tagId])
 
-    const addClientTagsResponse = await request.post(helperTags.addClientTagsUrl, {
+    const addClientTagsResponse = await request.post(tagsHelper.addClientTagsUrl, {
         data: addClientTagsBody
     })
 
@@ -29,6 +29,6 @@ test('Валидный тест Добавить теги клиенту', async
 
     const addClientTagsResponseBody = await addClientTagsResponse.json()
 
-    api.logApiRequest(helperTags.addClientTagsUrl, addClientTagsBody)
+    api.logApiRequest(tagsHelper.addClientTagsUrl, addClientTagsBody)
     api.logApiResponse(addClientTagsResponse, addClientTagsResponseBody)
 })
