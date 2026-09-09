@@ -1,33 +1,12 @@
 import { test, expect } from '@playwright/test'
-import * as api from '../../api.config'
 import * as clientsHelper from '../../helpers/clientsHelper'
 
+test('Валидный searchclient - поиск без клиента', async ({ request }) => {
 
-//Тест searchclient валидный
-test('Валидный searchclient', async ({ request }) => {
-    let phone = clientsHelper.generateClientPhone()
-    let body = clientsHelper.buildSearchClientBody(phone)
-    let response = await request.post(clientsHelper.searchClientUrl, {
-        data: body
-    })
+    const phone = clientsHelper.generateClientPhone()
+    const searchClient = await clientsHelper.searchClient(request, 0, phone)
+    expect(searchClient.response.status()).toBe(200)
 
-    expect(response.status()).toBe(200)
-
-    let responseBody = await response.json()
-
-    /*while (responseBody.state !== null) {
-        phone = api.generateClientPhone()
-        body = buildSearchClientBody(phone)
-
-        response = await request.post(searchClientUrl, {
-            data: body
-        })
-
-        responseBody = await response.json()
-    }*/
-
-    api.logApiRequest(clientsHelper.searchClientUrl, body)
-    api.logApiResponse(response, responseBody)
 })
 
 /*test('Невалидный searchclient', async ({ request }) => {

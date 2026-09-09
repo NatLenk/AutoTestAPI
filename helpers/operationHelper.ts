@@ -87,16 +87,15 @@ export function buildManualAddBody(clientId: number, overrides: Partial<Types.Ma
 
 //Функция отправки запроса manualadd
 export async function manualAdd(request: APIRequestContext, clientId: number, overrides: Partial<Types.ManualAdd> = {}) {
+
     const body = buildManualAddBody(clientId, overrides)
 
     api.logApiRequest(manualaddUrl, body)
-
     const response = await request.post(manualaddUrl, {
         data: body
     })
 
     const responseBody = await response.json()
-
     api.logApiResponse(response, responseBody)
 
     return {
@@ -104,6 +103,7 @@ export async function manualAdd(request: APIRequestContext, clientId: number, ov
         response,
         responseBody
     }
+
 }
 
 //Функция построения тела запроса getmovesbyclient

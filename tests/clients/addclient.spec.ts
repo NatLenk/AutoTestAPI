@@ -1,45 +1,34 @@
-import { test, expect, APIRequestContext } from '@playwright/test'
+import { test, expect } from '@playwright/test'
 import * as clientsHelper from '../../helpers/clientsHelper'
-import * as api from '../../api.config'
 
 test('Валидный addclient - добавление клиента', async ({ request }) => {
+
     const phone = await clientsHelper.findUnusedPhone(request)
 
-    const addClientBody = clientsHelper.buildAddClientBody(phone, null)
-
-    const addClientResponse = await request.post(clientsHelper.addClientUrl, {
-        data: addClientBody
-    })
-
-    expect(addClientResponse.status()).toBe(200)
-
-    const addClientResponseBody = await addClientResponse.json()
-
-    api.logApiRequest(clientsHelper.addClientUrl, addClientBody)
-    api.logApiResponse(addClientResponse, addClientResponseBody)
+    const addClient = await clientsHelper.addClient(request, phone, null)
+    expect(addClient.response.status()).toBe(200)
 
     const createdClientId = await clientsHelper.searchClientId(request, phone)
-
     expect(createdClientId).not.toBeNull()
+
 })
 
 test('Валидный addclient - обновление клиента', async ({ request }) => {
-    const { phone, clientId } = await clientsHelper.createTestClient(request)
 
-    const updateBody = {
-        ...clientsHelper.buildAddClientBody(phone, clientId),
-        middle_name: 'v2',
-        email: `updated${Date.now()}@test.ru`
-    }
-
-    const addClientResponse = await request.post(clientsHelper.addClientUrl, {
-        data: updateBody
+    const { phone, clientId } = await clientsHelper.createTestClient(request, {
+        middle_name: 'v1',
+        email: 'initial@test.ru'
     })
 
-    expect(addClientResponse.status()).toBe(200)
+    const updateBody = {
 
-    const addClientResponseBody = await addClientResponse.json()
+        middle_name: 'v2',
+        email: `updated${Date.now()}@test.ru`
 
-    api.logApiRequest(clientsHelper.addClientUrl, updateBody)
-    api.logApiResponse(addClientResponse, addClientResponseBody)
+    }
+
+    const addClient = await clientsHelper.addClient(request, phone, clientId, updateBody)
+    expect(addClient.response.status()).toBe(200)
+
+
 })
