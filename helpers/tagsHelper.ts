@@ -24,7 +24,7 @@ export async function getListTags(request: APIRequestContext, groupId: number | 
         data: body
     })
 
-    const responseBody = response.json()
+    const responseBody = await response.json()
 
     api.logApiResponse(response, responseBody)
 
@@ -52,7 +52,7 @@ export async function getClientTags(request: APIRequestContext, clientId: number
         data: body
     })
 
-    const responseBody = response.json()
+    const responseBody = await response.json()
 
     api.logApiResponse(response, responseBody)
 
@@ -81,7 +81,7 @@ export async function addClientTags(request: APIRequestContext, clientId: number
         data: body
     })
 
-    const responseBody = response.json()
+    const responseBody = await response.json()
 
     api.logApiResponse(response, responseBody)
 
@@ -110,7 +110,7 @@ export async function deleteClientTags(request: APIRequestContext, clientId: num
         data: body
     })
 
-    const responseBody = response.json()
+    const responseBody = await response.json()
 
     api.logApiResponse(response, responseBody)
 

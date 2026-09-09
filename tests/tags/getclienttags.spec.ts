@@ -1,44 +1,19 @@
 import { test, expect } from '@playwright/test'
 import * as clientsHelper from '../../helpers/clientsHelper'
-import * as api from '../../api.config'
 import * as tagsHelper from '../../helpers/tagsHelper'
 
 test('Валидный тест Получить список тегов клиента', async ({ request }) => {
 
     const { clientId } = await clientsHelper.createTestClient(request)
+    const getListTags = await tagsHelper.getListTags(request, null)
+    expect(getListTags.response.status()).toBe(200)
 
-    const getListTagsBody = tagsHelper.buildGetListTagsBody(null)
+    const tagId = getListTags.responseBody.tags_list[0].tag_id
+    const addClientTags = await tagsHelper.addClientTags(request, clientId, [tagId])
+    expect(addClientTags.response.status()).toBe(200)
 
-    const getListTagsResponse = await request.post(tagsHelper.getListTagsUrl, {
-        data: getListTagsBody
-    })
+    const getClientTags = await tagsHelper.getClientTags(request, clientId)
+    expect(getClientTags.response.status()).toBe(200)
+    expect(getClientTags.responseBody.data).toContain(tagId)
 
-    expect(getListTagsResponse.status()).toBe(200)
-
-    const getListTagsResponseBody = await getListTagsResponse.json()
-
-    const tagId = getListTagsResponseBody.tags_list[0].tag_id
-
-    const addClientTagsBody = tagsHelper.buildAddClientTagsBody(clientId, [tagId])
-
-    const addClientTagsResponse = await request.post(tagsHelper.addClientTagsUrl, {
-        data: addClientTagsBody
-    })
-
-    expect(addClientTagsResponse.status()).toBe(200)
-
-    const getClientTagsBody = tagsHelper.buildGetClientTagsBody(clientId)
-
-    const getClientTagsResponse = await request.post(tagsHelper.getClientTagsUrl, {
-        data: getClientTagsBody
-    })
-
-    expect(getClientTagsResponse.status()).toBe(200)
-
-    const getClientTagsResponseBody = await getClientTagsResponse.json()
-
-    expect(getClientTagsResponseBody.data).toContain(tagId)
-
-    api.logApiRequest(tagsHelper.getClientTagsUrl, getClientTagsBody)
-    api.logApiResponse(getClientTagsResponse, getClientTagsResponseBody)
 })
