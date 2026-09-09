@@ -1,4 +1,4 @@
-import { expect, APIRequestContext } from '@playwright/test'
+import { APIRequestContext } from '@playwright/test'
 import * as api from '../api.config'
 import type * as Types from '../types/RequestTypes'
 
