@@ -4,9 +4,11 @@ import type * as Types from '../types/RequestTypes'
 
 export const getListTagsUrl = api.buildLoadUrl('getlisttags')
 
-export const getClientTagsUrl = api.buildLoadUrl('getclienttagsinfo')
+export const getClientTagsInfoUrl = api.buildLoadUrl('getclienttagsinfo')
 
 export const addClientTagsUrl = api.buildLoadUrl('addclienttags')
+
+export const updateClientTagUrl = api.buildLoadUrl('updateclienttag')
 
 export const deleteClientTagsUrl = api.buildLoadUrl('deleteclienttags')
 
@@ -55,8 +57,8 @@ export async function getClientTagsInfo(request: APIRequestContext, clientId: nu
 
     const body = buildGetClientTagsInfoBody(clientId, tagId)
 
-    api.logApiRequest(getClientTagsUrl, body)
-    const response = await request.post(getClientTagsUrl, {
+    api.logApiRequest(getClientTagsInfoUrl, body)
+    const response = await request.post(getClientTagsInfoUrl, {
         data: body
     })
 
@@ -88,6 +90,37 @@ export async function addClientTags(request: APIRequestContext, clientId: number
 
     api.logApiRequest(addClientTagsUrl, body)
     const response = await request.post(addClientTagsUrl, {
+        data: body
+    })
+
+    const responseBody = await response.json()
+    api.logApiResponse(response, responseBody)
+
+    return {
+        body,
+        response,
+        responseBody
+    }
+
+}
+
+//Функция создания тела запроса updateclienttag
+export function buildUpdateClientTag(clientId: number, tag: { id: number, value: number, action: string }): Types.UpdateClientTag {
+
+    return {
+        client_id: clientId,
+        tag: tag
+    }
+
+}
+
+//Функция отправки запроса updateclienttag
+export async function updateClientTag(request: APIRequestContext, clientId: number, tag: { id: number, value: number, action: string }) {
+
+    const body = buildUpdateClientTag(clientId, tag)
+
+    api.logApiRequest(updateClientTagUrl, body)
+    const response = await request.post(updateClientTagUrl, {
         data: body
     })
 

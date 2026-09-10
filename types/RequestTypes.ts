@@ -133,6 +133,16 @@ export type AddClientTags = {
     tags: number[]
 }
 
+//Типизирование тела запроса updateclienttag
+export type UpdateClientTag = {
+    client_id: number,
+    tag: {
+        id: number,
+        value: number,
+        action: string
+    }
+}
+
 //Типизирование тела запроса deleteclienttags
 export type DeleteClientTags = {
     client_id: number,
