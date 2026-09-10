@@ -105,7 +105,7 @@ export async function addClientTags(request: APIRequestContext, clientId: number
 }
 
 //Функция создания тела запроса updateclienttag
-export function buildUpdateClientTag(clientId: number, tag: { id: number, value: number, action: string }): Types.UpdateClientTag {
+export function buildUpdateClientTagBody(clientId: number, tag: { id: number, value: number, action: string }): Types.UpdateClientTag {
 
     return {
         client_id: clientId,
@@ -117,7 +117,7 @@ export function buildUpdateClientTag(clientId: number, tag: { id: number, value:
 //Функция отправки запроса updateclienttag
 export async function updateClientTag(request: APIRequestContext, clientId: number, tag: { id: number, value: number, action: string }) {
 
-    const body = buildUpdateClientTag(clientId, tag)
+    const body = buildUpdateClientTagBody(clientId, tag)
 
     api.logApiRequest(updateClientTagUrl, body)
     const response = await request.post(updateClientTagUrl, {

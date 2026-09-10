@@ -4,6 +4,8 @@ import type * as Types from '../types/RequestTypes'
 
 export const searchpromocodeUrl = api.buildLoadUrl('searchpromocode')
 
+export const getclientpromocodesUrl = api.buildLoadUrl('getclientpromocodes')
+
 export const reservedpromocodeUrl = api.buildLoadUrl('reservedpromocode')
 
 export const generate_promocodeUrl = api.buildLoadUrl('generate_promocode')
@@ -24,6 +26,37 @@ export async function searchPromocode(request: APIRequestContext, promoCode: str
 
     api.logApiRequest(searchpromocodeUrl, body)
     const response = await request.post(searchpromocodeUrl, {
+        data: body
+    })
+
+    const responseBody = await response.json()
+    api.logApiResponse(response, responseBody)
+
+    return {
+        body,
+        response,
+        responseBody
+    }
+
+}
+
+//Функция построения тела getclientpromocodes
+export function buildGetClientPromocodesBody(clientId: number, activeOnly?: boolean | null): Types.GetClientPromocodes {
+
+    return {
+        client_id: clientId,
+        active_only: activeOnly
+    }
+
+}
+
+//Функция отправки запроса getclientpromocodes
+export async function getClientPromocodes(request: APIRequestContext, clientId: number, activeOnly?: boolean | null) {
+
+    const body = buildGetClientPromocodesBody(clientId, activeOnly)
+
+    api.logApiRequest(getclientpromocodesUrl, body)
+    const response = await request.post(getclientpromocodesUrl, {
         data: body
     })
 
@@ -69,18 +102,19 @@ export async function reservedPromocode(request: APIRequestContext, promoCode: s
 
 }
 //Функция построения тела generate_promocode
-export function buildGenerate_PromocodeBody(): Types.Generate_PromoCode {
+export function buildGenerate_PromocodeBody(clientId?: number | null): Types.Generate_PromoCode {
 
     return {
+        client_id: clientId,
         list_id: 999
     }
 
 }
 
 //Функция отправки запроса generate_promocode
-export async function generate_Promocode(request: APIRequestContext) {
+export async function generate_Promocode(request: APIRequestContext, clientId?: number | null) {
 
-    const body = buildGenerate_PromocodeBody()
+    const body = buildGenerate_PromocodeBody(clientId)
 
     api.logApiRequest(generate_promocodeUrl, body)
     const response = await request.post(generate_promocodeUrl, {

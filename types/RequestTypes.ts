@@ -244,6 +244,12 @@ export type SearchPromoCode = {
     promo_code: string
 }
 
+//Типизирование тела запроса getclientpromocodes
+export type GetClientPromocodes = {
+    client_id: number,
+    active_only?: boolean | null
+}
+
 //Типизирование тела запроса reservedpromocode
 export type ReservedPromoCode = {
     promo_code: string,
@@ -252,6 +258,7 @@ export type ReservedPromoCode = {
 
 //Типизирование тела запроса generate_promocode
 export type Generate_PromoCode = {
+    client_id?: number | null
     list_id: number
 }
 
