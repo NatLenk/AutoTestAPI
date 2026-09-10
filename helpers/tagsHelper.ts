@@ -4,7 +4,7 @@ import type * as Types from '../types/RequestTypes'
 
 export const getListTagsUrl = api.buildLoadUrl('getlisttags')
 
-export const getClientTagsUrl = api.buildLoadUrl('getclienttags')
+export const getClientTagsUrl = api.buildLoadUrl('getclienttagsinfo')
 
 export const addClientTagsUrl = api.buildLoadUrl('addclienttags')
 
@@ -40,19 +40,20 @@ export async function getListTags(request: APIRequestContext, groupId: number | 
 
 }
 
-//Функция создания тела запроса getclienttags
-export function buildGetClientTagsBody(clientId: number): Types.GetClientTags {
+//Функция создания тела запроса getclienttagsinfo
+export function buildGetClientTagsInfoBody(clientId: number, tagId?: number | null): Types.GetClientTags {
 
     return {
-        client_id: clientId
+        client_id: clientId,
+        tag_id: tagId
     }
 
 }
 
-//Функция отправки запроса getclienttags
-export async function getClientTags(request: APIRequestContext, clientId: number) {
+//Функция отправки запроса getclienttagsinfo
+export async function getClientTagsInfo(request: APIRequestContext, clientId: number, tagId?: number | null) {
 
-    const body = buildGetClientTagsBody(clientId)
+    const body = buildGetClientTagsInfoBody(clientId, tagId)
 
     api.logApiRequest(getClientTagsUrl, body)
     const response = await request.post(getClientTagsUrl, {

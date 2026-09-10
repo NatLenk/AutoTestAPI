@@ -121,9 +121,10 @@ export type GetListTags = {
     group_id?: number | null
 }
 
-//Типизирование тела запроса getclienttags
+//Типизирование тела запроса getclienttagsinfo
 export type GetClientTags = {
-    client_id: number
+    client_id: number,
+    tag_id?: number | null
 }
 
 //Типизирование тела запроса addclienttags

@@ -12,8 +12,8 @@ test('Валидный тест Получить список тегов кли�
     const addClientTags = await tagsHelper.addClientTags(request, clientId, [tagId])
     expect(addClientTags.response.status()).toBe(200)
 
-    const getClientTags = await tagsHelper.getClientTags(request, clientId)
-    expect(getClientTags.response.status()).toBe(200)
-    expect(getClientTags.responseBody.data).toContain(tagId)
+    const getClientTagsInfo = await tagsHelper.getClientTagsInfo(request, clientId, tagId)
+    expect(getClientTagsInfo.response.status()).toBe(200)
+    expect(getClientTagsInfo.responseBody.data).toContain(tagId)
 
 })
