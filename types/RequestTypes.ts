@@ -284,14 +284,14 @@ export type Goods = {
 }[]
 
 //Типизирование тела запроса goodslist
-type Inside = {
+export type Inside = {
     code: string,
     variant?: string,
     K?: number
 }
 
 export type GoodsList = {
-    id: number,
+    ID: number,
     inside: Inside[]
 }[]
 
