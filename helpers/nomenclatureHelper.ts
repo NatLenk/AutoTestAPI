@@ -1,18 +1,20 @@
 import { APIRequestContext } from '@playwright/test'
 import * as api from '../api.config'
 import type * as Types from '../types/RequestTypes'
+import { randomUUID } from 'node:crypto'
 
 export const goodsUrl = api.buildLoadUrl('goods')
 
 export const goodsListUrl = api.buildLoadUrl('goodslist')
 
 //Функция построения тела goods
-export function buildGoodsBody(code: string, name: string, isGroup?: boolean, deleteMark?: boolean, BC?: string[], fullName?: string): Types.Goods {
+export function buildGoodsBody(isGroup?: boolean, deleteMark?: boolean, BC?: string[], fullName?: string): Types.Goods {
+
+    const code = generateGoodsCode()
 
     return [{
-
         code,
-        name,
+        name: `Товар из автотеста ${code}`,
         is_group: isGroup,
         delete_mark: deleteMark,
         BC,
@@ -22,12 +24,16 @@ export function buildGoodsBody(code: string, name: string, isGroup?: boolean, de
 }
 
 //Функция отпраки запроса goods
-export async function goods(request: APIRequestContext, code: string, name: string, isGroup?: boolean, deleteMark?: boolean, BC?: string[], fullName?: string) {
+export async function goods(request: APIRequestContext, partial: boolean, isGroup?: boolean, deleteMark?: boolean, BC?: string[], fullName?: string) {
 
-    const body = buildGoodsBody(code, name, isGroup, deleteMark, BC, fullName)
+    const body = buildGoodsBody(isGroup, deleteMark, BC, fullName)
 
     api.logApiRequest(goodsUrl, body)
     const response = await request.post(goodsUrl, {
+        params: partial ? { partial: 1 } : {},
+        headers: {
+            'Content-Type': 'application/json'
+        },
         data: body
     })
 
@@ -54,7 +60,7 @@ export function buildGoodsListBody(id: number, inside: Types.Inside[]): Types.Go
 }
 
 //Функция отправки запроса goodslist
-export async function name(request: APIRequestContext, id: number, inside: Types.Inside[]) {
+export async function goodsList(request: APIRequestContext, id: number, inside: Types.Inside[]) {
 
     const body = buildGoodsListBody(id, inside)
 
@@ -73,5 +79,12 @@ export async function name(request: APIRequestContext, id: number, inside: Types
         responseBody
 
     }
+
+}
+
+//Функцция генерации code в товаре
+export function generateGoodsCode() {
+
+    return randomUUID()
 
 }
