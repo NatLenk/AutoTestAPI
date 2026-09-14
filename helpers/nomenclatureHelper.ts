@@ -8,7 +8,7 @@ export const goodsUrl = api.buildLoadUrl('goods')
 export const goodsListUrl = api.buildLoadUrl('goodslist')
 
 //Функция построения тела goods
-export function buildGoodsBody(isGroup?: boolean, deleteMark?: boolean, BC?: string[], fullName?: string): Types.Goods {
+export function buildGoodsBody(isGroup?: boolean, deleteMark?: boolean, BC?: string[], fullName?: string, overrides: Partial<Types.Goods[number]> = {}): Types.Goods {
 
     const code = generateGoodsCode()
 
@@ -18,15 +18,15 @@ export function buildGoodsBody(isGroup?: boolean, deleteMark?: boolean, BC?: str
         is_group: isGroup,
         delete_mark: deleteMark,
         BC,
-        full_name: fullName
-
+        full_name: fullName,
+        ...overrides
     }]
 }
 
 //Функция отпраки запроса goods
-export async function goods(request: APIRequestContext, partial: boolean, isGroup?: boolean, deleteMark?: boolean, BC?: string[], fullName?: string) {
+export async function goods(request: APIRequestContext, partial: boolean, isGroup?: boolean, deleteMark?: boolean, BC?: string[], fullName?: string, overrides: Partial<Types.Goods[number]> = {}) {
 
-    const body = buildGoodsBody(isGroup, deleteMark, BC, fullName)
+    const body = buildGoodsBody(isGroup, deleteMark, BC, fullName, overrides)
 
     api.logApiRequest(goodsUrl, body)
     const response = await request.post(goodsUrl, {
