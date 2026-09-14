@@ -50,19 +50,19 @@ export async function goods(request: APIRequestContext, partial: boolean, isGrou
 }
 
 //Функция построения тела goodslist
-export function buildGoodsListBody(id: number, inside: Types.Inside[]): Types.GoodsList {
+export function buildGoodsListBody(inside: Types.Inside[]): Types.GoodsList {
 
     return [{
-        ID: id,
+        ID: 999,
         inside
     }]
 
 }
 
 //Функция отправки запроса goodslist
-export async function goodsList(request: APIRequestContext, id: number, inside: Types.Inside[]) {
+export async function goodsList(request: APIRequestContext, inside: Types.Inside[]) {
 
-    const body = buildGoodsListBody(id, inside)
+    const body = buildGoodsListBody(inside)
 
     api.logApiRequest(goodsListUrl, body)
     const response = await request.post(goodsListUrl, {
