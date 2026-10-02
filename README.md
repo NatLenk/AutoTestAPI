@@ -96,3 +96,25 @@ npx playwright test tests/referral
 ```bash
 npx playwright test tests/referral/referral.spec.ts
 ```
+
+## Wallet
+
+Контракт API: [документация kilbil](https://docs.kilbil.ru/), раздел «Wallet».
+
+Тест находится в отдельной папке `tests/wallet`: `getwalletlink.spec.ts` — POST `getwalletlink`, получение ссылки на карту wallet клиента. В текущем контракте это единственный эндпоинт блока.
+
+Хелпер `helpers/walletHelper.ts` содержит функции построения тела запроса и отправки запроса. Используется существующий тип `GetWalletLink` из `types/RequestTypes.ts`.
+
+Тест самостоятельно создаёт клиента через `createTestClient` и передаёт его `client_id` в запрос. Проверяется только HTTP-статус 200: наличие карты wallet, ссылки и значения полей ответа не проверяются. Ответ сохраняется как текст без проверки формата JSON. Предварительно создавать карту wallet не требуется; каждый запуск создаёт нового клиента.
+
+Запуск блока:
+
+```bash
+npx playwright test tests/wallet
+```
+
+Запуск отдельного эндпоинта:
+
+```bash
+npx playwright test tests/wallet/getwalletlink.spec.ts
+```
