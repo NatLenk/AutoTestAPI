@@ -399,7 +399,7 @@ export type CloseSession = {
 export type ExchangePosSettings = {
     pos_program: string,
     version: string,
-    autoupdate: 0 | 1
+    autoupdate?: 0 | 1
 }
 
 //Типизирование тела запроса generatecard
