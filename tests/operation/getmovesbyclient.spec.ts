@@ -14,6 +14,6 @@ test('Валидный getmovesbyclient', async ({ request }) => {
     const getmovesbyclient = await operationHelper.getmovesbyclient(request, clientId)
     expect(getmovesbyclient.response.status()).toBe(200)
     expect(Array.isArray(getmovesbyclient.responseBody.client_moves)).toBe(true)
-    expect(getmovesbyclient.responseBody.client_moves.lenght).toBeGreaterThan(0)
+    expect(getmovesbyclient.responseBody.client_moves.length).toBeGreaterThan(0)
 
 })

@@ -1,14 +1,6 @@
-import { APIRequestContext } from '@playwright/test'
+import type { APIRequestContext } from '@playwright/test'
 import * as api from '../api.config'
 import type * as Types from '../types/RequestTypes'
-
-export const searchpromocodeUrl = api.buildLoadUrl('searchpromocode')
-
-export const getclientpromocodesUrl = api.buildLoadUrl('getclientpromocodes')
-
-export const reservedpromocodeUrl = api.buildLoadUrl('reservedpromocode')
-
-export const generate_promocodeUrl = api.buildLoadUrl('generate_promocode')
 
 //Функция построения тела searchpromocode
 export function buildSearchPromocodeBody(promoCode: string): Types.SearchPromoCode {
@@ -24,19 +16,11 @@ export async function searchPromocode(request: APIRequestContext, promoCode: str
 
     const body = buildSearchPromocodeBody(promoCode)
 
-    api.logApiRequest(searchpromocodeUrl, body)
-    const response = await request.post(searchpromocodeUrl, {
-        data: body
+    return api.sendApiRequest(request, {
+        endpoint: 'searchpromocode',
+        method: 'POST',
+        payload: body
     })
-
-    const responseBody = await response.json()
-    api.logApiResponse(response, responseBody)
-
-    return {
-        body,
-        response,
-        responseBody
-    }
 
 }
 
@@ -55,19 +39,11 @@ export async function getClientPromocodes(request: APIRequestContext, clientId: 
 
     const body = buildGetClientPromocodesBody(clientId, activeOnly)
 
-    api.logApiRequest(getclientpromocodesUrl, body)
-    const response = await request.post(getclientpromocodesUrl, {
-        data: body
+    return api.sendApiRequest(request, {
+        endpoint: 'getclientpromocodes',
+        method: 'POST',
+        payload: body
     })
-
-    const responseBody = await response.json()
-    api.logApiResponse(response, responseBody)
-
-    return {
-        body,
-        response,
-        responseBody
-    }
 
 }
 
@@ -86,19 +62,11 @@ export async function reservedPromocode(request: APIRequestContext, promoCode: s
 
     const body = buildReservedPromocodeBody(promoCode, setReserved)
 
-    api.logApiRequest(reservedpromocodeUrl, body)
-    const response = await request.post(reservedpromocodeUrl, {
-        data: body
+    return api.sendApiRequest(request, {
+        endpoint: 'reservedpromocode',
+        method: 'POST',
+        payload: body
     })
-
-    const responseBody = await response.json()
-    api.logApiResponse(response, responseBody)
-
-    return {
-        body,
-        response,
-        responseBody
-    }
 
 }
 //Функция построения тела generate_promocode
@@ -116,19 +84,11 @@ export async function generate_Promocode(request: APIRequestContext, clientId?: 
 
     const body = buildGenerate_PromocodeBody(clientId)
 
-    api.logApiRequest(generate_promocodeUrl, body)
-    const response = await request.post(generate_promocodeUrl, {
-        data: body
+    return api.sendApiRequest<Types.Generate_PromoCode, Types.GeneratePromoCodeResponseBody>(request, {
+        endpoint: 'generate_promocode',
+        method: 'POST',
+        payload: body
     })
-
-    const responseBody = await response.json()
-    api.logApiResponse(response, responseBody)
-
-    return {
-        body,
-        response,
-        responseBody
-    }
 
 }
 

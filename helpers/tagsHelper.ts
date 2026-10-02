@@ -1,16 +1,6 @@
-import { APIRequestContext } from '@playwright/test'
+import type { APIRequestContext } from '@playwright/test'
 import * as api from '../api.config'
 import type * as Types from '../types/RequestTypes'
-
-export const getListTagsUrl = api.buildLoadUrl('getlisttags')
-
-export const getClientTagsInfoUrl = api.buildLoadUrl('getclienttagsinfo')
-
-export const addClientTagsUrl = api.buildLoadUrl('addclienttags')
-
-export const updateClientTagUrl = api.buildLoadUrl('updateclienttag')
-
-export const deleteClientTagsUrl = api.buildLoadUrl('deleteclienttags')
 
 //Функция создания тела запроса getlisttags
 export function buildGetListTagsBody(groupId: number | null): Types.GetListTags {
@@ -26,19 +16,11 @@ export async function getListTags(request: APIRequestContext, groupId: number | 
 
     const body = buildGetListTagsBody(groupId)
 
-    api.logApiRequest(getListTagsUrl, body)
-    const response = await request.post(getListTagsUrl, {
-        data: body
+    return api.sendApiRequest<Types.GetListTags, Types.GetListTagsResponseBody>(request, {
+        endpoint: 'getlisttags',
+        method: 'POST',
+        payload: body
     })
-
-    const responseBody = await response.json()
-    api.logApiResponse(response, responseBody)
-
-    return {
-        body,
-        response,
-        responseBody
-    }
 
 }
 
@@ -57,19 +39,11 @@ export async function getClientTagsInfo(request: APIRequestContext, clientId: nu
 
     const body = buildGetClientTagsInfoBody(clientId, tagId)
 
-    api.logApiRequest(getClientTagsInfoUrl, body)
-    const response = await request.post(getClientTagsInfoUrl, {
-        data: body
+    return api.sendApiRequest<Types.GetClientTags, Types.GetClientTagsInfoResponseBody>(request, {
+        endpoint: 'getclienttagsinfo',
+        method: 'POST',
+        payload: body
     })
-
-    const responseBody = await response.json()
-    api.logApiResponse(response, responseBody)
-
-    return {
-        body,
-        response,
-        responseBody
-    }
 
 }
 
@@ -88,19 +62,11 @@ export async function addClientTags(request: APIRequestContext, clientId: number
 
     const body = buildAddClientTagsBody(clientId, tags)
 
-    api.logApiRequest(addClientTagsUrl, body)
-    const response = await request.post(addClientTagsUrl, {
-        data: body
+    return api.sendApiRequest(request, {
+        endpoint: 'addclienttags',
+        method: 'POST',
+        payload: body
     })
-
-    const responseBody = await response.json()
-    api.logApiResponse(response, responseBody)
-
-    return {
-        body,
-        response,
-        responseBody
-    }
 
 }
 
@@ -119,19 +85,11 @@ export async function updateClientTag(request: APIRequestContext, clientId: numb
 
     const body = buildUpdateClientTagBody(clientId, tag)
 
-    api.logApiRequest(updateClientTagUrl, body)
-    const response = await request.post(updateClientTagUrl, {
-        data: body
+    return api.sendApiRequest(request, {
+        endpoint: 'updateclienttag',
+        method: 'POST',
+        payload: body
     })
-
-    const responseBody = await response.json()
-    api.logApiResponse(response, responseBody)
-
-    return {
-        body,
-        response,
-        responseBody
-    }
 
 }
 
@@ -150,18 +108,10 @@ export async function deleteClientTags(request: APIRequestContext, clientId: num
 
     const body = buildDeleteClientTagsBody(clientId, tags)
 
-    api.logApiRequest(deleteClientTagsUrl, body)
-    const response = await request.post(deleteClientTagsUrl, {
-        data: body
+    return api.sendApiRequest(request, {
+        endpoint: 'deleteclienttags',
+        method: 'POST',
+        payload: body
     })
-
-    const responseBody = await response.json()
-    api.logApiResponse(response, responseBody)
-
-    return {
-        body,
-        response,
-        responseBody
-    }
 
 }

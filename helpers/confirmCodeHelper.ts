@@ -1,10 +1,6 @@
-import { APIRequestContext } from '@playwright/test'
+import type { APIRequestContext } from '@playwright/test'
 import * as api from '../api.config'
 import type * as Types from '../types/RequestTypes'
-
-export const askconfirmphoneUrl = api.buildLoadUrl('askconfirmphone')
-
-export const checkconfirmphonecodeUrl = api.buildLoadUrl('checkconfirmphonecode')
 
 //Функция построения тела запроса askconfirmphone
 export function buildAskConfirmPhoneBody(clientId: number | null, phone: string, overrides: Partial<Types.AskConfirmPhone>): Types.AskConfirmPhone {
@@ -22,19 +18,11 @@ export async function askConfirmPhone(request: APIRequestContext, clientId: numb
 
     const body = buildAskConfirmPhoneBody(clientId, phone, overrides)
 
-    api.logApiRequest(askconfirmphoneUrl, body)
-    const response = await request.post(askconfirmphoneUrl, {
-        data: body
+    return api.sendApiRequest(request, {
+        endpoint: 'askconfirmphone',
+        method: 'POST',
+        payload: body
     })
-
-    const responseBody = await response.json()
-    api.logApiResponse(response, responseBody)
-
-    return {
-        body,
-        response,
-        responseBody
-    }
 
 }
 
@@ -50,22 +38,14 @@ export function buildCheckConfirmPhoneCodeBody(clientId: number | null, phone: s
 }
 
 //Функция отправки запроса checkconfirmphonecode
-export async function checkConfirmPhoneCode(request: APIRequestContext, clientId: number | null, phone: string, overrrides: Partial<Types.CheckConfirmPhoneCode> = {}) {
+export async function checkConfirmPhoneCode(request: APIRequestContext, clientId: number | null, phone: string, overrides: Partial<Types.CheckConfirmPhoneCode> = {}) {
 
-    const body = buildCheckConfirmPhoneCodeBody(clientId, phone, overrrides)
+    const body = buildCheckConfirmPhoneCodeBody(clientId, phone, overrides)
 
-    api.logApiRequest(checkconfirmphonecodeUrl, body)
-    const response = await request.post(checkconfirmphonecodeUrl, {
-        data: body
+    return api.sendApiRequest(request, {
+        endpoint: 'checkconfirmphonecode',
+        method: 'POST',
+        payload: body
     })
-
-    const responseBody = await response.json()
-    api.logApiResponse(response, responseBody)
-
-    return {
-        body,
-        response,
-        responseBody
-    }
 
 }

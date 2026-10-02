@@ -41,10 +41,10 @@ export type SearchClientRequestBody = {
 }
 
 export type SearchClientResponseBody = {
-    state: null | 0 | 1 | 2 | 3 | 4
+    state: null | '0' | '1' | '2' | '3' | '4'
     client_id: string | null
     card_id: string | null
-    card_state: 0 | 2 | 3 | null
+    card_state: '0' | '2' | '3' | null
     card_code: string | null
     card_barcode: string | null
 }
@@ -99,6 +99,12 @@ export type ReplaceCard = {
     client_id: number
 }
 
+//Типизирование тела ответа replacecard
+export type ReplaceCardResponseBody = {
+    result_code: string
+    result_text?: string
+}
+
 //Типизирование тела запроса blockcard
 export type BlockCard = {
     card_id: number
@@ -121,10 +127,30 @@ export type GetListTags = {
     group_id?: number | null
 }
 
+//Типизирование тела успешного ответа getlisttags
+export type GetListTagsResponseBody = {
+    result_code: number
+    tags_list: {
+        tag_id: number
+        tag_name?: string
+        group_id?: number
+    }[]
+}
+
 //Типизирование тела запроса getclienttagsinfo
 export type GetClientTags = {
     client_id: number,
     tag_id?: number | null
+}
+
+//Типизирование тела успешного ответа getclienttagsinfo
+export type GetClientTagsInfoResponseBody = {
+    result_code: string
+    data: {
+        tag_id: number
+        tag_type: string
+        avalue?: number
+    }[]
 }
 
 //Типизирование тела запроса addclienttags
@@ -219,6 +245,12 @@ export type GetMovesByClient = {
     client_id: number
 }
 
+//Типизирование тела ответа getmovesbyclient
+export type GetMovesByClientResponseBody = {
+    result_code: string
+    client_moves: unknown[]
+}
+
 //Типизирование тела запроса getdetailingbymove
 export type GetDetailingByMove =
     | { id: number; move_id?: string; move_date?: string }
@@ -260,6 +292,13 @@ export type ReservedPromoCode = {
 export type Generate_PromoCode = {
     client_id?: number | null
     list_id: number
+}
+
+//Типизирование тела успешного ответа generate_promocode
+export type GeneratePromoCodeResponseBody = {
+    result_code: string
+    result_text: string
+    promocode: string
 }
 
 //Типизирование тела запроса getactionslist

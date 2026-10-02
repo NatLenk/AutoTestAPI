@@ -1,4 +1,4 @@
-import { APIResponse } from '@playwright/test';
+import type { APIResponse, APIRequestContext } from '@playwright/test';
 
 
 const baseUrl = process.env.BASE_URL!
@@ -48,4 +48,93 @@ export function getLocalDateTime(date = new Date()): string {
     const seconds = pad(date.getSeconds())
 
     return `${hours}:${minutes}:${seconds} ${day}.${month}.${year}`
+}
+
+type HttpMethod =
+    | 'GET'
+    | 'POST'
+    | 'PUT'
+    | 'PATCH'
+    | 'DELETE'
+    | 'HEAD'
+    | 'OPTIONS'
+
+type RequestOptions<TPayload> = {
+    endpoint: string
+    method: HttpMethod
+    payload: TPayload
+    params?: Record<string, string | number | boolean>
+    headers?: Record<string, string>
+    timeout?: number
+    responseType?: 'json' | 'text' | 'none'
+}
+
+type ApiResult<TPayload, TResponse> = {
+    body: TPayload
+    response: APIResponse
+    responseBody: TResponse
+}
+
+export async function sendApiRequest<TPayload, TResponse = unknown>(request: APIRequestContext, options: RequestOptions<TPayload>): Promise<ApiResult<TPayload, TResponse>> {
+
+    const {
+        endpoint,
+        method,
+        payload,
+        params = {},
+        headers,
+        timeout,
+        responseType = 'json'
+    } = options
+
+    if ((method === 'GET' || method === 'HEAD') && payload !== undefined) {
+        throw new Error(`${method}: передай параметры через params, без payload`)
+    }
+    const url = new URL(buildLoadUrl(endpoint))
+
+    for (const [name, value] of Object.entries(params)) {
+        url.searchParams.set(name, String(value))
+    }
+
+    console.log('REQUEST_METHOD', method)
+    logApiRequest(url.toString(), payload)
+
+    const response = await request.fetch(url.toString(), {
+        method,
+        data: payload,
+        headers,
+        timeout,
+        failOnStatusCode: false,
+        maxRetries: 0
+    })
+
+    let responseBody: unknown = null
+
+    if (responseType !== 'none') {
+        const text = await response.text()
+
+        if (responseType === 'text') {
+            responseBody = text
+        } else {
+            try {
+                responseBody = JSON.parse(text)
+            } catch (error) {
+                logApiResponse(response, text)
+
+                throw new Error(
+                    `Некорректный JSON: ${method} ${endpoint}, ` +
+                    `HTTP ${response.status()}`,
+                    { cause: error }
+                )
+            }
+        }
+    }
+
+    logApiResponse(response, responseBody)
+
+    return {
+        body: payload,
+        response,
+        responseBody: responseBody as TResponse
+    }
 }

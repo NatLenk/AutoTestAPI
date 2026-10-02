@@ -2,22 +2,6 @@ import { expect, APIRequestContext } from '@playwright/test'
 import * as api from '../api.config'
 import type * as Types from '../types/RequestTypes'
 
-export const searchClientUrl = api.buildLoadUrl('searchclient')
-
-export const addClientUrl = api.buildLoadUrl('addclient')
-
-export const getClientFullBalanceUrl = api.buildLoadUrl('getclientfullbalance')
-
-export const manualAddUrl = api.buildLoadUrl('manualadd')
-
-export const getClientCardsUrl = api.buildLoadUrl('getclientcards')
-
-export const replaceCardUrl = api.buildLoadUrl('replacecard')
-
-export const blockCardUrl = api.buildLoadUrl('blockcard')
-
-export const getConfirmationCodeUrl = api.buildLoadUrl('getconfirmationcode')
-
 //Функция создания тела запроса addclient
 export function buildAddClientBody(phone: string, clientId: number | null, overrides: Partial<Types.AddClientRequestBody> = {}): Types.AddClientRequestBody {
 
@@ -33,39 +17,21 @@ export function buildAddClientBody(phone: string, clientId: number | null, overr
 export async function addClient(request: APIRequestContext, phone: string, clientId: number | null, overrides: Partial<Types.AddClientRequestBody> = {}) {
 
     const body = buildAddClientBody(phone, clientId, overrides)
-    api.logApiRequest(addClientUrl, body)
 
-    const response = await request.post(addClientUrl, {
-        data: body
+    return api.sendApiRequest(request, {
+        endpoint: 'addclient',
+        method: 'POST',
+        payload: body
     })
-
-    const responseBody = await response.json()
-    api.logApiResponse(response, responseBody)
-
-    return {
-        body,
-        response,
-        responseBody
-    }
 
 }
 
 //Функция поиска client_id
 export async function searchClientId(request: APIRequestContext, phone: string): Promise<number | null> {
 
-    const body: Types.SearchClientRequestBody = {
-        search_mode: 0,
-        search_value: phone
-    }
-
-    const response = await request.post(searchClientUrl, {
-        data: body
-    })
+    const { response, responseBody } = await searchClient(request, 0, phone)
     expect(response.status()).toBe(200)
 
-    const responseBody = await response.json() as Types.SearchClientResponseBody
-    api.logApiRequest(searchClientUrl, body)
-    api.logApiResponse(response, responseBody)
     if (responseBody.client_id === null) {
         return null
     }
@@ -104,10 +70,7 @@ export async function findUnusedPhone(request: APIRequestContext): Promise<strin
 export async function createTestClient(request: APIRequestContext, overrides: Partial<Types.AddClientRequestBody> = {}): Promise<{ phone: string; clientId: number }> {
 
     const phone = await findUnusedPhone(request)
-    const body = buildAddClientBody(phone, null, overrides)
-    const response = await request.post(addClientUrl, {
-        data: body
-    })
+    const { response } = await addClient(request, phone, null, overrides)
     expect(response.status()).toBe(200)
 
     const clientId = await searchClientId(request, phone)
@@ -184,19 +147,14 @@ export async function searchClient(request: APIRequestContext, searchMode: 0 | 1
 
     const body = buildSearchClientBody(searchMode, searchValue, overrides)
 
-    api.logApiRequest(searchClientUrl, body)
-    const response = await request.post(searchClientUrl, {
-        data: body
+    return api.sendApiRequest<
+        Types.SearchClientRequestBody,
+        Types.SearchClientResponseBody
+    >(request, {
+        endpoint: 'searchclient',
+        method: 'POST',
+        payload: body
     })
-
-    const responseBody = await response.json()
-    api.logApiResponse(response, responseBody)
-
-    return {
-        body,
-        response,
-        responseBody
-    }
 
 }
 
@@ -223,19 +181,14 @@ export async function getClientFullBalance(request: APIRequestContext, clientId:
 
     const body = buildGetClientFullBalanceBody(clientId)
 
-    api.logApiRequest(getClientFullBalanceUrl, body)
-    const response = await request.post(getClientFullBalanceUrl, {
-        data: body
+    return api.sendApiRequest<
+        Types.GetClientFullBalanceRequestBody,
+        Types.BalanceItem[]
+    >(request, {
+        endpoint: 'getclientfullbalance',
+        method: 'POST',
+        payload: body
     })
-
-    const responseBody = await response.json()
-    api.logApiResponse(response, responseBody)
-
-    return {
-        body,
-        response,
-        responseBody
-    }
 
 }
 
@@ -253,19 +206,11 @@ export async function getClientCards(request: APIRequestContext, clientId: numbe
 
     const body = buildGetClientCardsBody(clientId)
 
-    api.logApiRequest(getClientCardsUrl, body)
-    const response = await request.post(getClientCardsUrl, {
-        data: body
+    return api.sendApiRequest(request, {
+        endpoint: 'getclientcards',
+        method: 'POST',
+        payload: body
     })
-
-    const responseBody = await response.json()
-    api.logApiResponse(response, responseBody)
-
-    return {
-        body,
-        response,
-        responseBody
-    }
 
 }
 //Функция построения тела replacecard
@@ -285,19 +230,14 @@ export async function replaceCard(request: APIRequestContext, searchMode: 0 | 1,
 
     const body = buildReplaceCardBody(searchMode, searchValue, clientId)
 
-    api.logApiRequest(replaceCardUrl, body)
-    const response = await request.post(replaceCardUrl, {
-        data: body
+    return api.sendApiRequest<
+        Types.ReplaceCard,
+        Types.ReplaceCardResponseBody
+    >(request, {
+        endpoint: 'replacecard',
+        method: 'POST',
+        payload: body
     })
-
-    const responseBody = await response.json()
-    api.logApiResponse(response, responseBody)
-
-    return {
-        body,
-        response,
-        responseBody
-    }
 
 }
 //Функция генерации кода карты из тестового диапазона
@@ -327,19 +267,11 @@ export async function blockCard(request: APIRequestContext, cardId: number) {
 
     const body = buildBlockCardBody(cardId)
 
-    api.logApiRequest(blockCardUrl, body)
-    const response = await request.post(blockCardUrl, {
-        data: body
+    return api.sendApiRequest<Types.BlockCard, Types.BlockCardResponseBody>(request, {
+        endpoint: 'blockcard',
+        method: 'POST',
+        payload: body
     })
-
-    const responseBody = await response.json()
-    api.logApiResponse(response, responseBody)
-
-    return {
-        body,
-        response,
-        responseBody
-    }
 
 }
 
@@ -358,18 +290,10 @@ export async function getConfirmationCode(request: APIRequestContext, clientId: 
 
     const body = buildGetConfirmationCodeBody(clientId, outerSystemsInterfaceType)
 
-    api.logApiRequest(getConfirmationCodeUrl, body)
-    const response = await request.post(getConfirmationCodeUrl, {
-        data: body
+    return api.sendApiRequest(request, {
+        endpoint: 'getconfirmationcode',
+        method: 'POST',
+        payload: body
     })
-
-    const responseBody = await response.json()
-    api.logApiResponse(response, responseBody)
-
-    return {
-        body,
-        response,
-        responseBody
-    }
 
 }

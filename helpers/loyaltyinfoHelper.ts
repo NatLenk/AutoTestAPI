@@ -1,10 +1,6 @@
-import { APIRequestContext } from '@playwright/test'
+import type { APIRequestContext } from '@playwright/test'
 import * as api from '../api.config'
 import type * as Types from '../types/RequestTypes'
-
-export const getActionsListUrl = api.buildLoadUrl('getactionslist')
-
-export const getProgramsUrl = api.buildLoadUrl('getprograms')
 
 //Функция построения тела getactionslist
 export function buildGetActionsListBody(tradeObjectId: number | null, goods: string[]): Types.GetActionsList {
@@ -21,19 +17,11 @@ export async function getActionsList(request: APIRequestContext, tradeObjectId: 
 
     const body = buildGetActionsListBody(tradeObjectId, goods)
 
-    api.logApiRequest(getActionsListUrl, body)
-    const response = await request.post(getActionsListUrl, {
-        data: body
+    return api.sendApiRequest(request, {
+        endpoint: 'getactionslist',
+        method: 'POST',
+        payload: body
     })
-
-    const responseBody = await response.json()
-    api.logApiResponse(response, responseBody)
-
-    return {
-        body,
-        response,
-        responseBody
-    }
 
 }
 
@@ -51,16 +39,10 @@ export async function getPrograms(request: APIRequestContext) {
 
     const body = buildGetProgramsBody()
 
-    api.logApiRequest(getProgramsUrl, body)
-    const response = await request.post(getProgramsUrl, body)
-
-    const responseBody = await response.json()
-    api.logApiResponse(response, responseBody)
-
-    return {
-        body,
-        response,
-        responseBody
-    }
+    return api.sendApiRequest(request, {
+        endpoint: 'getprograms',
+        method: 'POST',
+        payload: body
+    })
 
 }

@@ -14,6 +14,8 @@ test('Валидный тест Получить список тегов кли�
 
     const getClientTagsInfo = await tagsHelper.getClientTagsInfo(request, clientId, tagId)
     expect(getClientTagsInfo.response.status()).toBe(200)
-    expect(getClientTagsInfo.responseBody.data).toContain(tagId)
+    expect(getClientTagsInfo.responseBody.data).toContainEqual(
+        expect.objectContaining({ tag_id: tagId })
+    )
 
 })
