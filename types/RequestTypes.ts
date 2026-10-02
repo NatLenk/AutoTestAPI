@@ -368,6 +368,11 @@ export type GenerateGiftCardResponseBody = {
     gc_balance: number
 }
 
+//Типизирование тела запроса referral
+export type Referral = {
+    client_id: number
+}
+
 //Типизирование тела запроса getwalletlink
 export type GetWalletLink = {
     client_id: number

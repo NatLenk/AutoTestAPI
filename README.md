@@ -74,3 +74,25 @@ npx playwright test tests/giftcard
 ```bash
 npx playwright test tests/giftcard/searchgiftcard.spec.ts
 ```
+
+## Реферальная программа
+
+Контракт API: [документация kilbil](https://docs.kilbil.ru/), раздел «Реферальная программа».
+
+Тест находится в отдельной папке `tests/referral`: `referral.spec.ts` — POST `referral`, получение списка рефералов клиента. В текущем контракте это единственный эндпоинт блока.
+
+Хелпер `helpers/referralHelper.ts` содержит функции построения тела запроса и отправки запроса. Тип тела запроса `Referral` находится в `types/RequestTypes.ts`. В этой итерации тест проверяет только HTTP-статус 200.
+
+Тест самостоятельно создаёт клиента-рекомендателя, затем второго клиента с `referrer_client_id`, равным ID рекомендателя. После этого запрашивает рефералов рекомендателя. Тест не зависит от ранее созданных клиентов или порядка запуска; каждый запуск создаёт двух новых клиентов.
+
+Запуск блока:
+
+```bash
+npx playwright test tests/referral
+```
+
+Запуск отдельного эндпоинта:
+
+```bash
+npx playwright test tests/referral/referral.spec.ts
+```
