@@ -344,6 +344,30 @@ export type GenerateGiftCard = {
     program_id: number
 }
 
+//Типизирование тела успешного ответа getprogramgiftcard
+export type GiftCardProgram = {
+    id: number
+    aname: string
+    description: string
+    generate_gift_card: boolean
+}
+
+export type GetProgramGiftCardResponseBody = {
+    result_code: string
+    data: GiftCardProgram[]
+}
+
+//Типизирование тела успешного ответа generategiftcard
+export type GenerateGiftCardResponseBody = {
+    result_code: string
+    result_text: string
+    gc_code: string
+    gc_barcode: string
+    gc_state: 0 | 1 | 2 | 3 | 4
+    gc_state_text: string
+    gc_balance: number
+}
+
 //Типизирование тела запроса getwalletlink
 export type GetWalletLink = {
     client_id: number
