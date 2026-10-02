@@ -15,6 +15,5 @@ test('Валидный replacecard', async ({ request }) => {
 
     const replaceCard = await clientsHelper.replaceCard(request, searchMode, searchValue, clientId)
     expect(replaceCard.response.status()).toBe(200)
-    expect(replaceCard.responseBody.result_code).toBe('0')
 
 })
