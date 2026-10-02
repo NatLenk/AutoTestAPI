@@ -149,3 +149,25 @@ npx playwright test tests/other
 ```bash
 npx playwright test tests/other/legal_info.spec.ts
 ```
+
+## План-факт
+
+Контракт API: [документация kilbil](https://docs.kilbil.ru/), раздел «План-факт».
+
+Тесты находятся в отдельной папке `tests/planfact`: `getsalesindicesslides.spec.ts` — POST `getsalesindicesslides`, получение слайдов, настроенных для отображения на кассе.
+
+Хелпер `helpers/planfactHelper.ts` содержит функции построения тела и отправки запроса. Используется существующий тип `GetSalesIndicesSlides` из `types/RequestTypes.ts`. Необязательный параметр `date` передаётся в формате `ДД.ММ.ГГГГ` для подстановки даты в переменную `<ДатаДр18Лет>` блока `info`.
+
+В файле два теста: с текущей локальной датой, полученной через `getLocalDateTime`, и без параметра `date` (пустое тело `{}`). Оба проверяют только HTTP-статус 200; тело ответа сохраняется как текст без проверки формата JSON или содержимого. Тесты не зависят от порядка запуска.
+
+Запуск блока:
+
+```bash
+npx playwright test tests/planfact
+```
+
+Запуск отдельного эндпоинта:
+
+```bash
+npx playwright test tests/planfact/getsalesindicesslides.spec.ts
+```
