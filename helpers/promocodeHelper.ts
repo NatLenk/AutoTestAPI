@@ -74,7 +74,7 @@ export function buildGenerate_PromocodeBody(clientId?: number | null): Types.Gen
 
     return {
         client_id: clientId,
-        list_id: 999
+        list_id: 613
     }
 
 }

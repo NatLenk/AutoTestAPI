@@ -39,7 +39,7 @@ export async function goods(request: APIRequestContext, partial: boolean, isGrou
 export function buildGoodsListBody(inside: Types.Inside[]): Types.GoodsList {
 
     return [{
-        ID: 999,
+        ID: 572,
         inside
     }]
 
