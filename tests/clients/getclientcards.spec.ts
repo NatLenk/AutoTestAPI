@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test'
 import * as clientsHelper from '../../helpers/clientsHelper'
 
-test('Валидный getclientcards', async ({ request }) => {
+test('getclientcards - получаем карты клиента', async ({ request }) => {
 
     const cardCode = `999${Date.now()}`
     const cardBarcode = cardCode

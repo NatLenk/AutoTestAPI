@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test'
 import * as clientsHelper from '../../helpers/clientsHelper'
 
-test('Валидный getconfirmationcode', async ({ request }) => {
+test('getconfirmationcode - получаем код подтверждения', async ({ request }) => {
 
     const { clientId } = await clientsHelper.createTestClient(request)
 

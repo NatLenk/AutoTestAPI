@@ -3,14 +3,14 @@ import * as api from '../api.config'
 import type * as Types from '../types/RequestTypes'
 import { randomUUID } from 'node:crypto'
 
-//Функция построения тела goods
+// Собираем тело запроса goods
 export function buildGoodsBody(isGroup?: boolean, deleteMark?: boolean, BC?: string[], fullName?: string, overrides: Partial<Types.Goods[number]> = {}): Types.Goods {
 
     const code = generateGoodsCode()
 
     return [{
         code,
-        name: `Товар из автотеста ${code}`,
+        name: `Тестовый товар ${code}`,
         is_group: isGroup,
         delete_mark: deleteMark,
         BC,
@@ -19,7 +19,7 @@ export function buildGoodsBody(isGroup?: boolean, deleteMark?: boolean, BC?: str
     }]
 }
 
-//Функция отпраки запроса goods
+// Отправляем запрос goods
 export async function goods(request: APIRequestContext, partial: boolean, isGroup?: boolean, deleteMark?: boolean, BC?: string[], fullName?: string, overrides: Partial<Types.Goods[number]> = {}) {
 
     const body = buildGoodsBody(isGroup, deleteMark, BC, fullName, overrides)
@@ -35,7 +35,7 @@ export async function goods(request: APIRequestContext, partial: boolean, isGrou
     })
 }
 
-//Функция построения тела goodslist
+// Собираем тело запроса goodslist
 export function buildGoodsListBody(inside: Types.Inside[]): Types.GoodsList {
 
     return [{
@@ -45,7 +45,7 @@ export function buildGoodsListBody(inside: Types.Inside[]): Types.GoodsList {
 
 }
 
-//Функция отправки запроса goodslist
+// Отправляем запрос goodslist
 export async function goodsList(request: APIRequestContext, inside: Types.Inside[]) {
 
     const body = buildGoodsListBody(inside)
@@ -58,7 +58,7 @@ export async function goodsList(request: APIRequestContext, inside: Types.Inside
 
 }
 
-//Функцция генерации code в товаре
+// Генерируем код товара
 export function generateGoodsCode() {
 
     return randomUUID()

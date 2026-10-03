@@ -4,7 +4,7 @@ import type * as Types from '../types/RequestTypes'
 import * as helperClient from '../helpers/clientsHelper'
 import { randomUUID } from 'node:crypto'
 
-//Функция построения тела запроса processsale
+// Собираем тело запроса processsale
 export function buildProcessSaleBody(clientId: number | null, type: 0 | 1, bonusOut: number, maxBonusOut: number, overrides: Partial<Types.ProcessSale> = {}): Types.ProcessSale {
 
     return {
@@ -20,7 +20,7 @@ export function buildProcessSaleBody(clientId: number | null, type: 0 | 1, bonus
 
 }
 
-//Функция отправки запроса processsale
+// Отправляем запрос processsale
 export async function processSale(request: APIRequestContext, clientId: number | null, overrides: Partial<Types.ProcessSale> = {}) {
 
     const body = buildProcessSaleBody(clientId, 0, 0, 0, overrides)
@@ -33,7 +33,7 @@ export async function processSale(request: APIRequestContext, clientId: number |
 
 }
 
-//Функция построения тела запроса confirmsale
+// Собираем тело запроса confirmsale
 export function buildConfirmsaleBody(moveId: string, docOpenDt: string, overrides: Partial<Types.ConfirmSale> = {}): Types.ConfirmSale {
 
     return {
@@ -45,7 +45,7 @@ export function buildConfirmsaleBody(moveId: string, docOpenDt: string, override
 
 }
 
-//Функция отправки запроса confirmsale
+// Отправляем запрос confirmsale
 export async function confirmsale(request: APIRequestContext, moveId: string, docOpenDt: string, overrides: Partial<Types.ConfirmSale> = {}) {
 
     const body = buildConfirmsaleBody(moveId, docOpenDt, overrides)
@@ -58,7 +58,7 @@ export async function confirmsale(request: APIRequestContext, moveId: string, do
 
 }
 
-//Функция построения тела запроса manualadd
+// Собираем тело запроса manualadd
 export function buildManualAddBody(clientId: number, overrides: Partial<Types.ManualAdd> = {}): Types.ManualAdd {
 
     return {
@@ -69,7 +69,7 @@ export function buildManualAddBody(clientId: number, overrides: Partial<Types.Ma
 }
 
 
-//Функция отправки запроса manualadd
+// Отправляем запрос manualadd
 export async function manualAdd(request: APIRequestContext, clientId: number, overrides: Partial<Types.ManualAdd> = {}) {
 
     const body = buildManualAddBody(clientId, overrides)
@@ -82,7 +82,7 @@ export async function manualAdd(request: APIRequestContext, clientId: number, ov
 
 }
 
-//Функция построения тела запроса getmovesbyclient
+// Собираем тело запроса getmovesbyclient
 export function buildGetMovesByClientBody(clientId: number): Types.GetMovesByClient {
 
     return {
@@ -91,7 +91,7 @@ export function buildGetMovesByClientBody(clientId: number): Types.GetMovesByCli
 
 }
 
-//Функция отправки запроса getmovesbyclient
+// Отправляем запрос getmovesbyclient
 export async function getmovesbyclient(request: APIRequestContext, clientId: number) {
 
     const body = buildGetMovesByClientBody(clientId)
@@ -107,7 +107,7 @@ export async function getmovesbyclient(request: APIRequestContext, clientId: num
 
 }
 
-//Функция построения тела запроса getdetailingbymove
+// Собираем тело запроса getdetailingbymove
 export function buildGetDetailingByMoveBody(params: Types.GetDetailingByMove): Types.GetDetailingByMove {
 
     return {
@@ -116,7 +116,7 @@ export function buildGetDetailingByMoveBody(params: Types.GetDetailingByMove): T
 
 }
 
-//Функция отправки запроса getdetailingbymove
+// Отправляем запрос getdetailingbymove
 export async function getdetailingbymove(request: APIRequestContext, params: Types.GetDetailingByMove) {
 
     const body = buildGetDetailingByMoveBody(params)

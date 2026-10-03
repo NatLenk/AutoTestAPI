@@ -3,7 +3,7 @@ import { randomInt } from 'node:crypto'
 import * as api from '../api.config'
 import type * as Types from '../types/RequestTypes'
 
-//Функция построения тела запроса closesession
+// Собираем тело запроса closesession
 export function buildCloseSessionBody(cashPaymentAmount: number, cardPaymentAmount: number, overrides: Partial<Types.CloseSession> = {}): Types.CloseSession {
 
     const [time, date] = api.getLocalDateTime().split(' ')
@@ -20,7 +20,7 @@ export function buildCloseSessionBody(cashPaymentAmount: number, cardPaymentAmou
 
 }
 
-//Функция отправки запроса closesession
+// Отправляем запрос closesession
 export async function closeSession(request: APIRequestContext, cashPaymentAmount: number, cardPaymentAmount: number, overrides: Partial<Types.CloseSession> = {}) {
 
     const body = buildCloseSessionBody(cashPaymentAmount, cardPaymentAmount, overrides)
@@ -34,7 +34,7 @@ export async function closeSession(request: APIRequestContext, cashPaymentAmount
 
 }
 
-//Функция построения тела запроса exchangepossettings
+// Собираем тело запроса exchangepossettings
 export function buildExchangePosSettingsBody(posProgram: string, version: string, autoupdate?: 0 | 1): Types.ExchangePosSettings {
 
     return {
@@ -45,7 +45,7 @@ export function buildExchangePosSettingsBody(posProgram: string, version: string
 
 }
 
-//Функция отправки запроса exchangepossettings
+// Отправляем запрос exchangepossettings
 export async function exchangePosSettings(request: APIRequestContext, posProgram: string, version: string, autoupdate?: 0 | 1) {
 
     const body = buildExchangePosSettingsBody(posProgram, version, autoupdate)
@@ -59,7 +59,7 @@ export async function exchangePosSettings(request: APIRequestContext, posProgram
 
 }
 
-//Функция построения тела запроса generatecard
+// Собираем тело запроса generatecard
 export function buildGenerateCardBody(clientId: number): Types.GenerateCard {
 
     return {
@@ -69,7 +69,7 @@ export function buildGenerateCardBody(clientId: number): Types.GenerateCard {
 
 }
 
-//Функция отправки запроса generatecard
+// Отправляем запрос generatecard
 export async function generateCard(request: APIRequestContext, clientId: number) {
 
     const body = buildGenerateCardBody(clientId)
@@ -83,7 +83,7 @@ export async function generateCard(request: APIRequestContext, clientId: number)
 
 }
 
-//Функция отправки запроса legal_info (GET без тела)
+// Отправляем запрос legal_info
 export async function legalInfo(request: APIRequestContext) {
 
     return api.sendApiRequest<undefined, string>(request, {

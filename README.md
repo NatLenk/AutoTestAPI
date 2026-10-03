@@ -1,75 +1,211 @@
-# Обязательно к прочтению "Запуск тестов"
-
 # Автотесты API kilbil
 
+Перед первым запуском нужно подготовить данные в личном кабинете. Ниже написал, что для этого нужно сделать.
 
-Файл содержит автотесты апи. Написаны на playwright TypeScript.
+## Что лежит в проекте
 
-Для работы с репозиторием нужно установить библиотеку playwright командой:
+- `tests` — сами тесты. Разложил их по папкам, а файлы назвал по методам API.
+- `helpers` — функции, которые собирают данные и отправляют запросы. Использую их, чтобы не писать одно и то же в каждом тесте.
+- `types/RequestTypes.ts` — типы для данных, которые отправляю и получаю в запросах.
+- `api.config.ts` — общие функции для запросов: собирают URL, выводят запрос и ответ в консоль, возвращают дату и время.
+- `playwright.config.ts` — настройки запуска тестов.
 
-**npm init playwright@latest**
+## Как запустить тесты
 
-## Содержимое проекта:
+Сначала нужно установить зависимости проекта:
 
--Для запуска тестов в CI нужны переменные окружения GitHub. Cоздать GitHub Environment api-test, переменные BASE_URL и API_TOKEN
+```bash
+npm ci
+```
 
--Для локальной отладки тестов нужно создать файл .env.local указав те же переменные как и в GitHub
+Для запуска на своём компьютере нужно создать файл `.env.local` в корне проекта и указать в нём `BASE_URL` и `API_TOKEN`.
 
--Папка tests содержит файлы запросов. Название каждого файла соответствует эндпоинту.
+Для запуска через GitHub Actions нужно создать Environment с названием `api-test` и добавить в него секреты `BASE_URL` и `API_TOKEN`.
 
--В папке types находится файл RequestTypes содержит типизированные параметры для body запросов
+Перед запуском в личном кабинете нужно:
 
--В файле конфигурации api.config.ts находят функции для построения url и вспомогательные функции.
+- Создать диапазон карт от `99900000000` до `99999999999`.
+- Включить QR-коды.
+- Создать теги и группы тегов. Для теста `updateclienttag` первый тег в ответе `getlisttags` должен быть счётчиком.
+- Создать группу промокодов с диапазоном от `99900000000` до `99999999999`. ID группы нужно записать в `list_id` функции `buildGenerate_PromocodeBody` в `helpers/promocodeHelper.ts`.
+- Создать акцию на изменение цены товара с кодом `1234`.
+- Создать группу товаров. Её ID нужно записать в поле `ID` функции `buildGoodsListBody` в `helpers/nomenclatureHelper.ts`.
 
-## Запуск тестов
+Все тесты запускаются так:
 
-Для запуска тестов с использованием библиотеки playwright нужно выполнить команду:
+```bash
+npx playwright test
+```
 
-**npx playwright test** - запуск всех файлов соответствующих форматов .spec.js, .spec.ts, .test.js или .test.ts находящихся в папке tests
+Один файл можно запустить так:
 
-**npx playwright test tests/searchclient.spec.ts** - запуск конкретного файла содержащего тесты
+```bash
+npx playwright test tests/clients/searchclient.spec.ts
+```
 
-**npx playwright test searchclient** - запуск всех тестов содержащих в названии searchclient
+А так можно запустить тесты, у которых в пути к файлу или названии есть `searchclient`:
 
-**Для запуска тестов также нужно в личном кабинете создать диапазон карт от 99900000000 до 99999999999**
+```bash
+npx playwright test searchclient
+```
 
-**Для запуска тестов также нужно в личном кабинете включить использование qr-кодов**
+## Клиенты
 
-**Для запуска тестов в ЛК нужно создать теги и группы тегов**
+В папке `tests/clients` семь файлов с тестами. Во всех запросах использую POST:
 
-**Для запуска тестов также нужно в личном кабинете создать группу промокодов и задать диапазон  от 99900000000 до 99999999999. Также id группы промокодов вставить в значение list_id функции buildGenerate_PromocodeBody**
+Функции для этих запросов находятся в `helpers/clientsHelper.ts`, а типы запросов и ответов — в `types/RequestTypes.ts`.
 
-**Для запуска тестов необходимо создать акцию на изменение цены с товаров с кодом "1234"**
+Для создания клиента сначала ищу свободный номер телефона через `findUnusedPhone`. Функция `createTestClient` добавляет клиента и находит его ID по телефону. В большинстве тестов использую её, поэтому заранее создавать клиентов не нужно. В отдельном тесте `searchclient` просто передаю случайный телефон и проверяю статус 200.
 
-**Для запуска тестов необходимо создать группу товаров в личном кабинете. И значения ее id вписать в function buildGoodsListBody в параметр ID**
+Запустить все тесты клиентов:
+
+```bash
+npx playwright test tests/clients
+```
+
+Запустить только проверки баланса:
+
+```bash
+npx playwright test tests/clients/getclientfullbalance.spec.ts
+```
+
+## Теги
+
+В папке `tests/tags` пять тестов. Во всех запросах использую POST:
+
+Функции для этих запросов находятся в `helpers/tagsHelper.ts`, а типы — в `types/RequestTypes.ts`.
+
+Перед запуском нужно создать теги и группы тегов в личном кабинете. В тестах беру первый тег из `tags_list`, поэтому список не должен быть пустым. Для `updateclienttag` этот тег должен быть счётчиком (`tag_type: counter`).
+
+В тестах с клиентом сначала создаю нового клиента и добавляю ему тег. В тесте удаления сначала добавляю тег, потом удаляю его. Так каждый тест можно запускать отдельно.
+
+Запустить все тесты тегов:
+
+```bash
+npx playwright test tests/tags
+```
+
+Запустить один тест:
+
+```bash
+npx playwright test tests/tags/updateclienttag.spec.ts
+```
+
+## Операции
+
+В папке `tests/operation` пять файлов с тестами. Во всех запросах использую POST:
+
+Функции для запросов находятся в `helpers/operationHelper.ts`. Товары для продажи собираю в `buildGoodsData` из `helpers/clientsHelper.ts`. Типы запросов и ответов лежат в `types/RequestTypes.ts`.
+
+Для продажи создаю случайный `move_id` и беру дату и время компьютера.
+
+Запустить все тесты операций:
+
+```bash
+npx playwright test tests/operation
+```
+
+Запустить один файл:
+
+```bash
+npx playwright test tests/operation/processsale.spec.ts
+```
+
+## Подтверждение телефона
+
+В папке `tests/confirm code` два теста. В обоих использую POST:
+
+Функции для запросов находятся в `helpers/confirmcodeHelper.ts`. Использую типы `AskConfirmPhone` и `CheckConfirmPhoneCode` из `types/RequestTypes.ts`.
+
+Клиент и телефон создаются внутри каждого теста.
+
+Запустить оба теста:
+
+```bash
+npx playwright test "tests/confirm code"
+```
+
+Запустить только запрос без кода:
+
+```bash
+npx playwright test "tests/confirm code/checkconfirmphonecode.spec.ts"
+```
+
+## Промокоды
+
+В папке `tests/promocode` четыре теста. Во всех запросах использую POST:
+
+Функции для этих запросов находятся в `helpers/promocodeHelper.ts`, а типы — в `types/RequestTypes.ts`.
+
+Перед запуском нужно создать группу промокодов и записать её ID в `list_id` функции `buildGenerate_PromocodeBody`. Диапазон промокодов указан выше в подготовке к запуску.
+
+Запустить все тесты промокодов:
+
+```bash
+npx playwright test tests/promocode
+```
+
+Запустить только поиск:
+
+```bash
+npx playwright test tests/promocode/searchpromocode.spec.ts
+```
+
+## Лояльность
+
+В папке `tests/loyaltyinfo` два теста. В обоих использую POST:
+
+Функции для запросов находятся в `helpers/loyaltyinfoHelper.ts`. Использую типы `GetPrograms` и `GetActionsList` из `types/RequestTypes.ts`.
+
+В тесте `getactionslist` сначала загружаю товар с кодом `1234` через `goods`. Перед запуском в личном кабинете нужно создать акцию на изменение цены этого товара.
+
+Запустить оба теста:
+
+```bash
+npx playwright test tests/loyaltyinfo
+```
+
+Запустить только получение акций:
+
+```bash
+npx playwright test tests/loyaltyinfo/getactionslist.spec.ts
+```
+
+## Номенклатура
+
+В папке `tests/nomenclature` два файла с тестами. В запросах использую POST:
+
+Функции для этих запросов находятся в `helpers/nomenclatureHelper.ts`. Типы `Goods`, `GoodsList` и `Inside` лежат в `types/RequestTypes.ts`.
+
+Перед запуском `goodslist` нужно создать группу товаров в личном кабинете и записать её ID в поле `ID` функции `buildGoodsListBody`. В тесте сначала загружаю товар, жду 60 секунд и потом передаю его код в `inside`. Для этого теста время ожидания увеличено до 120 секунд.
+
+Запустить все тесты номенклатуры:
+
+```bash
+npx playwright test tests/nomenclature
+```
+
+Запустить только добавление товара в группу:
+
+```bash
+npx playwright test tests/nomenclature/goodslist.spec.ts
+```
 
 ## Подарочные сертификаты
 
-Контракт API: [документация kilbil](https://docs.kilbil.ru/), раздел «Подарочные сертификаты».
+В папке `tests/giftcard` три теста. Для поиска и создания сертификата использую POST, для получения программ — GET.
 
-Тесты находятся в папке `tests/giftcard`, каждый эндпоинт — в отдельном файле:
+Функции для этих запросов находятся в `helpers/giftcardHelper.ts`, а типы запросов и ответов — в `types/RequestTypes.ts`.
 
-- `searchgiftcard.spec.ts` — POST `searchgiftcard`, поиск сертификата по штрихкоду.
-- `getprogramgiftcard.spec.ts` — GET `getprogramgiftcard`, получение списка программ без тела запроса.
-- `generategiftcard.spec.ts` — POST `generategiftcard`, генерация сертификата по ID программы.
+Перед запуском нужно создать тестовую программу подарочных сертификатов в личном кабинете и включить генерацию (`generate_gift_card: true`). В функции `getGiftCardProgramId` беру ID первой программы с включённой генерацией.
 
-Хелпер `helpers/giftcardHelper.ts` содержит функции построения тел запросов и отправки запросов. В этой итерации тесты проверяют только HTTP-статус 200.
-
-Перед запуском вручную создайте в личном кабинете тестовую программу подарочных сертификатов: **создать программу через API нельзя**. Настройте в ней генерацию сертификатов (у программы должно быть `generate_gift_card = true`). Метод `generategiftcard` создаёт сертификат в уже существующей программе.
-
-Перед генерацией хелпер автоматически получает список программ через `getprogramgiftcard` и передаёт ID первой программы с `generate_gift_card = true` в тело `generategiftcard`. Если подходящих программ несколько, используется первая в порядке ответа API; программы с выключенной генерацией пропускаются. Указывать ID в коде или переменных окружения не требуется.
-
-Если список пуст или ни одна программа не поддерживает генерацию, тесты поиска и генерации завершаются с понятной ошибкой о необходимости создать и настроить программу в ЛК. Запрос генерации в этом случае не отправляется.
-
-Тест поиска самостоятельно генерирует сертификат и берёт `gc_barcode` из ответа, поэтому тесты не зависят от порядка запуска. Каждый запуск тестов поиска и генерации создаёт новые сертификаты; используйте тестовую программу.
-
-Запуск всего блока:
+Запустить все тесты сертификатов:
 
 ```bash
 npx playwright test tests/giftcard
 ```
 
-Запуск отдельного эндпоинта:
+Запустить только поиск:
 
 ```bash
 npx playwright test tests/giftcard/searchgiftcard.spec.ts
@@ -77,21 +213,17 @@ npx playwright test tests/giftcard/searchgiftcard.spec.ts
 
 ## Реферальная программа
 
-Контракт API: [документация kilbil](https://docs.kilbil.ru/), раздел «Реферальная программа».
+В папке `tests/referral` один тест. В запросе использую POST.
 
-Тест находится в отдельной папке `tests/referral`: `referral.spec.ts` — POST `referral`, получение списка рефералов клиента.
+Функции для запроса находятся в `helpers/referralHelper.ts`. Использую тип `Referral` из `types/RequestTypes.ts`.
 
-Хелпер `helpers/referralHelper.ts` содержит функции построения тела запроса и отправки запроса. Тип тела запроса `Referral` находится в `types/RequestTypes.ts`.
-
-Тест самостоятельно создаёт клиента-рекомендателя, затем второго клиента с `referrer_client_id`, равным ID рекомендателя. После этого запрашивает рефералов рекомендателя. Тест не зависит от ранее созданных клиентов или порядка запуска; каждый запуск создаёт двух новых клиентов.
-
-Запуск блока:
+Запустить тесты из папки:
 
 ```bash
 npx playwright test tests/referral
 ```
 
-Запуск отдельного эндпоинта:
+Запустить один файл:
 
 ```bash
 npx playwright test tests/referral/referral.spec.ts
@@ -99,75 +231,56 @@ npx playwright test tests/referral/referral.spec.ts
 
 ## Wallet
 
-Контракт API: [документация kilbil](https://docs.kilbil.ru/), раздел «Wallet».
+В папке `tests/wallet` один тест. В запросе использую POST.
 
-Тест находится в отдельной папке `tests/wallet`: `getwalletlink.spec.ts` — POST `getwalletlink`, получение ссылки на карту wallet клиента.
+Функции для запроса находятся в `helpers/walletHelper.ts`. Использую тип `GetWalletLink` из `types/RequestTypes.ts`.
 
-Хелпер `helpers/walletHelper.ts` содержит функции построения тела запроса и отправки запроса. Используется существующий тип `GetWalletLink` из `types/RequestTypes.ts`.
-
-Тест самостоятельно создаёт клиента через `createTestClient` и передаёт его `client_id` в запрос. Ответ сохраняется как текст без проверки формата JSON.
-
-Запуск блока:
+Запустить тесты из папки:
 
 ```bash
 npx playwright test tests/wallet
 ```
 
-Запуск отдельного эндпоинта:
+Запустить один файл:
 
 ```bash
 npx playwright test tests/wallet/getwalletlink.spec.ts
 ```
 
-## Другое
-
-Контракт API: [документация kilbil](https://docs.kilbil.ru/), раздел «Другое».
-
-Тесты находятся в отдельной папке `tests/other`, каждый эндпоинт — в отдельном файле:
-
-- `closesession.spec.ts` — POST `closesession`, отправка информации о закрытии кассовой смены.
-- `exchangepossettings.spec.ts` — POST `exchangepossettings`, отправка информации о кассовом ПО и получение настроек.
-- `generatecard.spec.ts` — POST `generatecard`, генерация карты CardsMobile существующего клиента.
-- `legal_info.spec.ts` — GET `legal_info`, получение ссылок на правовую информацию без тела запроса.
-
-Хелпер `helpers/otherHelper.ts` содержит функции построения тел и отправки запросов. Используются типы `CloseSession`, `ExchangePosSettings` и `GenerateCard` из `types/RequestTypes.ts`. Параметр `autoupdate` необязательный по контракту; его следует передавать только для Frontol со стандартным скриптом.
-
-В тесте `closesession` суммы наличной и безналичной оплаты задаются переменными `cashPaymentAmount` и `cardPaymentAmount` и передаются в хелпер. Сейчас обе суммы равны нулю; их можно менять прямо в тесте, в том числе на отрицательные для будущих негативных проверок. Хелпер передаёт суммы без изменения, генерирует случайный положительный номер смены и текущее локальное время в формате `ДД.ММ.ГГГГ ЧЧ:ММ:СС`. Каждый запуск отправляет новую запись смены.
-
-Тест `exchangepossettings` передаёт название ПО `AutoTestAPI` и версию `1.0.0` без параметра автообновления.
-
-Тест `generatecard` самостоятельно создаёт нового клиента через `createTestClient`, затем передаёт его `client_id` и `outer_systems_interface_type: 4`. Он не зависит от других тестов или заранее созданного клиента. Каждый запуск создаёт клиента и отправляет запрос генерации карты. Для фактической генерации карты должна быть настроена интеграция CardsMobile; наличие карты и успешность генерации в этой итерации не проверяются.
-
-Запуск блока:
-
-```bash
-npx playwright test tests/other
-```
-
-Запуск отдельного эндпоинта:
-
-```bash
-npx playwright test tests/other/legal_info.spec.ts
-```
-
 ## План-факт
 
-Контракт API: [документация kilbil](https://docs.kilbil.ru/), раздел «План-факт».
+В папке `tests/planfact` один файл с двумя тестами. В обоих запросах использую POST.
 
-Тесты находятся в отдельной папке `tests/planfact`: `getsalesindicesslides.spec.ts` — POST `getsalesindicesslides`, получение слайдов, настроенных для отображения на кассе.
+Функции для запроса находятся в `helpers/planfactHelper.ts`. Использую тип `GetSalesIndicesSlides` из `types/RequestTypes.ts`.
 
-Хелпер `helpers/planfactHelper.ts` содержит функции построения тела и отправки запроса. Используется существующий тип `GetSalesIndicesSlides` из `types/RequestTypes.ts`. Необязательный параметр `date` передаётся в формате `ДД.ММ.ГГГГ` для подстановки даты в переменную `<ДатаДр18Лет>` блока `info`.
-
-В файле два теста: с текущей локальной датой, полученной через `getLocalDateTime`, и без параметра `date` (пустое тело `{}`). Оба проверяют только HTTP-статус 200; тело ответа сохраняется как текст без проверки формата JSON или содержимого. Тесты не зависят от порядка запуска.
-
-Запуск блока:
+Запустить оба теста:
 
 ```bash
 npx playwright test tests/planfact
 ```
 
-Запуск отдельного эндпоинта:
+Запустить один файл:
 
 ```bash
 npx playwright test tests/planfact/getsalesindicesslides.spec.ts
+```
+
+## Другое
+
+В папке `tests/other` четыре теста. Для `legal_info` использую GET, для остальных запросов — POST.
+
+Функции для этих запросов находятся в `helpers/otherHelper.ts`. Типы `CloseSession`, `ExchangePosSettings` и `GenerateCard` лежат в `types/RequestTypes.ts`.
+
+Для создания карты в тесте `generatecard` нужно настроить интеграцию CardsMobile.
+
+Запустить все тесты из папки:
+
+```bash
+npx playwright test tests/other
+```
+
+Запустить один тест:
+
+```bash
+npx playwright test tests/other/legal_info.spec.ts
 ```

@@ -2,7 +2,7 @@ import type { APIRequestContext } from '@playwright/test'
 import * as api from '../api.config'
 import type * as Types from '../types/RequestTypes'
 
-//Функция построения тела searchpromocode
+// Собираем тело запроса searchpromocode
 export function buildSearchPromocodeBody(promoCode: string): Types.SearchPromoCode {
 
     return {
@@ -11,7 +11,7 @@ export function buildSearchPromocodeBody(promoCode: string): Types.SearchPromoCo
 
 }
 
-//Функция отправки запроса searchpromocode
+// Отправляем запрос searchpromocode
 export async function searchPromocode(request: APIRequestContext, promoCode: string) {
 
     const body = buildSearchPromocodeBody(promoCode)
@@ -24,7 +24,7 @@ export async function searchPromocode(request: APIRequestContext, promoCode: str
 
 }
 
-//Функция построения тела getclientpromocodes
+// Собираем тело запроса getclientpromocodes
 export function buildGetClientPromocodesBody(clientId: number, activeOnly?: boolean | null): Types.GetClientPromocodes {
 
     return {
@@ -34,7 +34,7 @@ export function buildGetClientPromocodesBody(clientId: number, activeOnly?: bool
 
 }
 
-//Функция отправки запроса getclientpromocodes
+// Отправляем запрос getclientpromocodes
 export async function getClientPromocodes(request: APIRequestContext, clientId: number, activeOnly?: boolean | null) {
 
     const body = buildGetClientPromocodesBody(clientId, activeOnly)
@@ -47,7 +47,7 @@ export async function getClientPromocodes(request: APIRequestContext, clientId: 
 
 }
 
-//Функция построения тела reservedpromocode
+// Собираем тело запроса reservedpromocode
 export function buildReservedPromocodeBody(promoCode: string, setReserved: true | false): Types.ReservedPromoCode {
 
     return {
@@ -57,7 +57,7 @@ export function buildReservedPromocodeBody(promoCode: string, setReserved: true 
 
 }
 
-//Функция отправки запроса reservedpromocode
+// Отправляем запрос reservedpromocode
 export async function reservedPromocode(request: APIRequestContext, promoCode: string, setReserved: true | false) {
 
     const body = buildReservedPromocodeBody(promoCode, setReserved)
@@ -69,7 +69,7 @@ export async function reservedPromocode(request: APIRequestContext, promoCode: s
     })
 
 }
-//Функция построения тела generate_promocode
+// Собираем тело запроса generate_promocode
 export function buildGenerate_PromocodeBody(clientId?: number | null): Types.Generate_PromoCode {
 
     return {
@@ -79,7 +79,7 @@ export function buildGenerate_PromocodeBody(clientId?: number | null): Types.Gen
 
 }
 
-//Функция отправки запроса generate_promocode
+// Отправляем запрос generate_promocode
 export async function generate_Promocode(request: APIRequestContext, clientId?: number | null) {
 
     const body = buildGenerate_PromocodeBody(clientId)
@@ -92,7 +92,7 @@ export async function generate_Promocode(request: APIRequestContext, clientId?: 
 
 }
 
-//Функция генерации промокода из тестового диапазона
+// Получаем промокод из диапазона для тестов
 export function generatePromocode(): string {
 
     const firstPromocodeNumber = 99_900_000_000

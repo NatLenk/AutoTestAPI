@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 import * as clientsHelper from '../../helpers/clientsHelper'
 import * as tagsHelper from '../../helpers/tagsHelper'
 
-test('Валидный тест Добавить теги клиенту', async ({ request }) => {
+test('addclienttags - добавляем тег клиенту', async ({ request }) => {
 
     const { clientId } = await clientsHelper.createTestClient(request)
     const getListTags = await tagsHelper.getListTags(request, null)

@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test'
 import * as clientsHelper from '../../helpers/clientsHelper'
 
-test('Валидный blockcard', async ({ request }) => {
+test('blockcard - блокируем карту клиента', async ({ request }) => {
 
     const cardCode = clientsHelper.generateCardCode()
     const cardBarcode = cardCode
@@ -15,7 +15,7 @@ test('Валидный blockcard', async ({ request }) => {
 
     const rawCardId = searchClient.responseBody.card_id
     if (rawCardId === null) {
-        throw new Error('Карта не найдена у клиента')
+        throw new Error('У клиента не нашли карту')
     }
 
     const cardId = Number(rawCardId)

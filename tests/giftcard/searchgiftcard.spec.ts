@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import * as giftcardHelper from "../../helpers/giftcardHelper"
 
-test('Валидный searchgiftcard', async ({ request }) => {
+test('searchgiftcard - ищем сертификат по штрихкоду', async ({ request }) => {
 
     const generateGiftCard = await giftcardHelper.generateGiftCard(request)
     expect(generateGiftCard.response.status()).toBe(200)

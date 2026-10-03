@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test"
 import * as nomenclatureHelper from '../../helpers/nomenclatureHelper'
 
-test('Валидный goodslist', async ({ request }) => {
+test('goodslist - добавляем товар в группу', async ({ request }) => {
 
     test.setTimeout(120_000)
 

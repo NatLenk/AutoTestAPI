@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 import * as clientsHelper from '../../helpers/clientsHelper'
 import * as walletHelper from '../../helpers/walletHelper'
 
-test('Валидный getwalletlink - получение ссылки на карту wallet клиента', async ({ request }) => {
+test('getwalletlink - получаем ссылку на Wallet-карту клиента', async ({ request }) => {
 
     const { clientId } = await clientsHelper.createTestClient(request)
 

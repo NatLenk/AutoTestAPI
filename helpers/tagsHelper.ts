@@ -2,7 +2,7 @@ import type { APIRequestContext } from '@playwright/test'
 import * as api from '../api.config'
 import type * as Types from '../types/RequestTypes'
 
-//Функция создания тела запроса getlisttags
+// Собираем тело запроса getlisttags
 export function buildGetListTagsBody(groupId: number | null): Types.GetListTags {
 
     return {
@@ -11,7 +11,7 @@ export function buildGetListTagsBody(groupId: number | null): Types.GetListTags 
 
 }
 
-//Функция отправки запроса getlisttags
+// Отправляем запрос getlisttags
 export async function getListTags(request: APIRequestContext, groupId: number | null) {
 
     const body = buildGetListTagsBody(groupId)
@@ -24,7 +24,7 @@ export async function getListTags(request: APIRequestContext, groupId: number | 
 
 }
 
-//Функция создания тела запроса getclienttagsinfo
+// Собираем тело запроса getclienttagsinfo
 export function buildGetClientTagsInfoBody(clientId: number, tagId?: number | null): Types.GetClientTags {
 
     return {
@@ -34,7 +34,7 @@ export function buildGetClientTagsInfoBody(clientId: number, tagId?: number | nu
 
 }
 
-//Функция отправки запроса getclienttagsinfo
+// Отправляем запрос getclienttagsinfo
 export async function getClientTagsInfo(request: APIRequestContext, clientId: number, tagId?: number | null) {
 
     const body = buildGetClientTagsInfoBody(clientId, tagId)
@@ -47,7 +47,7 @@ export async function getClientTagsInfo(request: APIRequestContext, clientId: nu
 
 }
 
-//Функция создания тела запроса addclienttags
+// Собираем тело запроса addclienttags
 export function buildAddClientTagsBody(clientId: number, tags: number[]): Types.AddClientTags {
 
     return {
@@ -57,7 +57,7 @@ export function buildAddClientTagsBody(clientId: number, tags: number[]): Types.
 
 }
 
-//Функция отправки запроса addclienttags
+// Отправляем запрос addclienttags
 export async function addClientTags(request: APIRequestContext, clientId: number, tags: number[]) {
 
     const body = buildAddClientTagsBody(clientId, tags)
@@ -70,7 +70,7 @@ export async function addClientTags(request: APIRequestContext, clientId: number
 
 }
 
-//Функция создания тела запроса updateclienttag
+// Собираем тело запроса updateclienttag
 export function buildUpdateClientTagBody(clientId: number, tag: { id: number, value: number, action: string }): Types.UpdateClientTag {
 
     return {
@@ -80,7 +80,7 @@ export function buildUpdateClientTagBody(clientId: number, tag: { id: number, va
 
 }
 
-//Функция отправки запроса updateclienttag
+// Отправляем запрос updateclienttag
 export async function updateClientTag(request: APIRequestContext, clientId: number, tag: { id: number, value: number, action: string }) {
 
     const body = buildUpdateClientTagBody(clientId, tag)
@@ -93,7 +93,7 @@ export async function updateClientTag(request: APIRequestContext, clientId: numb
 
 }
 
-//Функция создания тела запроса deleteclienttags
+// Собираем тело запроса deleteclienttags
 export function buildDeleteClientTagsBody(clientId: number, tags: number[]): Types.DeleteClientTags {
 
     return {
@@ -103,7 +103,7 @@ export function buildDeleteClientTagsBody(clientId: number, tags: number[]): Typ
 
 }
 
-//Функция отправки запроса deleteclienttags
+// Отправляем запрос deleteclienttags
 export async function deleteClientTags(request: APIRequestContext, clientId: number, tags: number[]) {
 
     const body = buildDeleteClientTagsBody(clientId, tags)

@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 import * as promocodeHelper from "../../helpers/promocodeHelper"
 import * as clientsHelper from '../../helpers/clientsHelper'
 
-test('Валидный getclientpromocodes', async ({ request }) => {
+test('getclientpromocodes - получаем промокоды клиента', async ({ request }) => {
 
     const { clientId } = await clientsHelper.createTestClient(request)
 

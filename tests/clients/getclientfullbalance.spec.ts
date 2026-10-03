@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 import * as clientsHelper from '../../helpers/clientsHelper'
 import * as operationHelper from '../../helpers/operationHelper'
 
-test('Проверка баланса нового клиента', async ({ request }) => {
+test('getclientfullbalance - проверяем баланс нового клиента', async ({ request }) => {
 
     const { clientId } = await clientsHelper.createTestClient(request)
 
@@ -15,7 +15,7 @@ test('Проверка баланса нового клиента', async ({ req
 
 })
 
-test('Проверка изменения баланса после ручного начисления', async ({ request }) => {
+test('getclientfullbalance - проверяем баланс после добавления бонусов', async ({ request }) => {
 
     const bonusAmount = 10
 
@@ -28,7 +28,7 @@ test('Проверка изменения баланса после ручног
     const totalBalanceBefore = clientsHelper.calculateTotalBalance(balanceBefore.responseBody)
     expect(Number.isFinite(totalBalanceBefore)).toBe(true)
 
-    const manualAdd = await operationHelper.manualAdd(request, clientId, { bonus_in: bonusAmount, description: 'Ручное начисление проверка изменения баланса клиента API' })
+    const manualAdd = await operationHelper.manualAdd(request, clientId, { bonus_in: bonusAmount, description: 'Добавляем бонусы и проверяем баланс клиента' })
     expect(manualAdd.response.status()).toBe(200)
     expect(manualAdd.responseBody.result_code).toBe(0)
 

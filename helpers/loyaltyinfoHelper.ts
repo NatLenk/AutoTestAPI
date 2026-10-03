@@ -2,7 +2,7 @@ import type { APIRequestContext } from '@playwright/test'
 import * as api from '../api.config'
 import type * as Types from '../types/RequestTypes'
 
-//Функция построения тела getactionslist
+// Собираем тело запроса getactionslist
 export function buildGetActionsListBody(tradeObjectId: number | null, goods: string[]): Types.GetActionsList {
 
     return {
@@ -12,7 +12,7 @@ export function buildGetActionsListBody(tradeObjectId: number | null, goods: str
 
 }
 
-//Функция отправки запроса getactionslist
+// Отправляем запрос getactionslist
 export async function getActionsList(request: APIRequestContext, tradeObjectId: number | null, goods: string[]) {
 
     const body = buildGetActionsListBody(tradeObjectId, goods)
@@ -25,7 +25,7 @@ export async function getActionsList(request: APIRequestContext, tradeObjectId: 
 
 }
 
-//Функция построения тела getprograms
+// Собираем тело запроса getprograms
 export function buildGetProgramsBody(): Types.GetPrograms {
 
     return {
@@ -34,7 +34,7 @@ export function buildGetProgramsBody(): Types.GetPrograms {
 
 }
 
-//Функция отправки запроса getprograms
+// Отправляем запрос getprograms
 export async function getPrograms(request: APIRequestContext) {
 
     const body = buildGetProgramsBody()

@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 import * as clientsHelper from '../../helpers/clientsHelper'
 import * as operationHelper from '../../helpers/operationHelper'
 
-test('Валидный getdetailingbymove', async ({ request }) => {
+test('getdetailingbymove - получаем подробности операции', async ({ request }) => {
 
     const { clientId } = await clientsHelper.createTestClient(request)
     const processSale = await operationHelper.processSale(request, clientId)

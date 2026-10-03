@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test'
 import * as clientsHelper from '../../helpers/clientsHelper'
 
-test('Валидный addclient - добавление клиента', async ({ request }) => {
+test('addclient - добавляем нового клиента', async ({ request }) => {
 
     const phone = await clientsHelper.findUnusedPhone(request)
 
@@ -13,7 +13,7 @@ test('Валидный addclient - добавление клиента', async (
 
 })
 
-test('Валидный addclient - обновление клиента', async ({ request }) => {
+test('addclient - обновляем данные клиента', async ({ request }) => {
 
     const { phone, clientId } = await clientsHelper.createTestClient(request, {
         middle_name: 'v1',

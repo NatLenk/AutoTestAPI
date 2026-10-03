@@ -2,7 +2,7 @@ import type { APIRequestContext } from '@playwright/test'
 import * as api from '../api.config'
 import type * as Types from '../types/RequestTypes'
 
-//Функция построения тела запроса referral
+// Собираем тело запроса referral
 export function buildReferralBody(clientId: number): Types.Referral {
 
     return {
@@ -11,7 +11,7 @@ export function buildReferralBody(clientId: number): Types.Referral {
 
 }
 
-//Функция отправки запроса referral
+// Отправляем запрос referral
 export async function referral(request: APIRequestContext, clientId: number) {
 
     const body = buildReferralBody(clientId)

@@ -2,7 +2,7 @@ import type { APIRequestContext } from '@playwright/test'
 import * as api from '../api.config'
 import type * as Types from '../types/RequestTypes'
 
-//Функция построения тела запроса getwalletlink
+// Собираем тело запроса getwalletlink
 export function buildGetWalletLinkBody(clientId: number): Types.GetWalletLink {
 
     return {
@@ -11,7 +11,7 @@ export function buildGetWalletLinkBody(clientId: number): Types.GetWalletLink {
 
 }
 
-//Функция отправки запроса getwalletlink
+// Отправляем запрос getwalletlink
 export async function getWalletLink(request: APIRequestContext, clientId: number) {
 
     const body = buildGetWalletLinkBody(clientId)

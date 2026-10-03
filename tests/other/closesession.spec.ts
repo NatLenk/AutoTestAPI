@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test'
 import * as otherHelper from '../../helpers/otherHelper'
 
-test('Валидный closesession - отправка информации о закрытии смены', async ({ request }) => {
+test('closesession - отправляем данные о закрытии смены', async ({ request }) => {
 
     const cashPaymentAmount = 0
     const cardPaymentAmount = 0

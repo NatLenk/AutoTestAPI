@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 import * as confirmcodeHelper from '../../helpers/confirmcodeHelper'
 import * as clientsHelper from '../../helpers/clientsHelper'
 
-test('Невалидный checkconfirmphonecode - без отправки кода', async ({ request }) => {
+test('checkconfirmphonecode - отправляем запрос без кода подтверждения', async ({ request }) => {
 
     const { clientId, phone } = await clientsHelper.createTestClient(request)
     const askConfirmPhone = await confirmcodeHelper.askConfirmPhone(request, clientId, phone)

@@ -4,7 +4,7 @@ import type { APIResponse, APIRequestContext } from '@playwright/test';
 const baseUrl = process.env.BASE_URL!
 const token = process.env.API_TOKEN!
 
-//Функция создания url с проверкой и удалением лишних слешей перед endpoint
+// Собираем URL и убираем лишние слеши в начале endpoint
 export function buildLoadUrl(endpoint: string): string {
     const normalizedEndpoint = endpoint.replace(/^\/+/, '');
 
@@ -15,7 +15,7 @@ export function buildLoadUrl(endpoint: string): string {
     return url.toString();
 }
 
-//Функция логирования запроса
+// Выводим запрос в консоль, токен скрываем
 export function logApiRequest(
     url: string,
     body: unknown
@@ -27,7 +27,7 @@ export function logApiRequest(
     console.log('REQUEST_BODY', JSON.stringify(body, null, 2))
 }
 
-//Функция логирования ответа
+// Выводим статус и ответ в консоль
 export function logApiResponse(
     response: APIResponse,
     responseBody: unknown
@@ -36,7 +36,7 @@ export function logApiResponse(
     console.log('RESPONSE_BODY', JSON.stringify(responseBody, null, 2))
 }
 
-//Функция получение локальной даты компьютера
+// Берём дату и время компьютера в формате ЧЧ:ММ:СС ДД.ММ.ГГГГ
 export function getLocalDateTime(date = new Date()): string {
     const pad = (value: number): string => value.toString().padStart(2, '0')
 
@@ -88,7 +88,7 @@ export async function sendApiRequest<TPayload, TResponse = unknown>(request: API
     } = options
 
     if ((method === 'GET' || method === 'HEAD') && payload !== undefined) {
-        throw new Error(`${method}: передай параметры через params, без payload`)
+        throw new Error(`${method}: параметры нужно передать в params, а payload убрать`)
     }
     const url = new URL(buildLoadUrl(endpoint))
 
@@ -122,7 +122,7 @@ export async function sendApiRequest<TPayload, TResponse = unknown>(request: API
                 logApiResponse(response, text)
 
                 throw new Error(
-                    `Некорректный JSON: ${method} ${endpoint}, ` +
+                    `Не получилось прочитать ответ как JSON: ${method} ${endpoint}, ` +
                     `HTTP ${response.status()}`,
                     { cause: error }
                 )

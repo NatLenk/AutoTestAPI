@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 import * as clientsHelper from '../../helpers/clientsHelper'
 import * as tagsHelper from '../../helpers/tagsHelper'
 
-test('Валидный updateclienttag', async ({ request }) => {
+test('updateclienttag - увеличиваем значение тега-счётчика', async ({ request }) => {
 
     const { clientId } = await clientsHelper.createTestClient(request)
     const getListTags = await tagsHelper.getListTags(request, null)
@@ -18,9 +18,9 @@ test('Валидный updateclienttag', async ({ request }) => {
 
     const clientTag = getClientTagInfo.responseBody.data.find((tag: { tag_id: number }) => tag.tag_id === tagId)
     if (!clientTag) {
-        throw new Error(`Тег ${tagId} не найден у клиента ${clientId}`)
+        throw new Error(`Не нашли тег ${tagId} у клиента ${clientId}`)
     }
-    expect(clientTag.tag_type, `Тег ${tagId} должен быть счётчиком`).toBe('counter')
+    expect(clientTag.tag_type, `Для этого теста нужен тег-счётчик, проверяем тег ${tagId}`).toBe('counter')
 
     const updateClientTag = await tagsHelper.updateClientTag(request, clientId, { id: tagId, value: 2, action: 'up' })
     expect(updateClientTag.response.status()).toBe(200)

@@ -2,10 +2,10 @@ import { expect, test } from "@playwright/test";
 import * as loyaltyinfoHelper from "../../helpers/loyaltyinfoHelper"
 import * as nomenclatureHelper from "../../helpers/nomenclatureHelper";
 
-test('Валидный getactionslist', async ({ request }) => {
+test('getactionslist - получаем акции для товара', async ({ request }) => {
 
     const code = "1234"
-    const name = `Товар для акции ${code}`
+    const name = `Тестовый товар для акции ${code}`
 
     const loadGoods = await nomenclatureHelper.goods(request, true, undefined, undefined, undefined, undefined, { code, name })
     expect(loadGoods.response.status()).toBe(200)

@@ -2,7 +2,7 @@ import { expect, APIRequestContext } from '@playwright/test'
 import * as api from '../api.config'
 import type * as Types from '../types/RequestTypes'
 
-//Функция создания тела запроса addclient
+// Собираем тело запроса addclient
 export function buildAddClientBody(phone: string, clientId: number | null, overrides: Partial<Types.AddClientRequestBody> = {}): Types.AddClientRequestBody {
 
     return {
@@ -13,7 +13,7 @@ export function buildAddClientBody(phone: string, clientId: number | null, overr
 
 }
 
-//Функция отправки запроса addclient
+// Отправляем запрос addclient
 export async function addClient(request: APIRequestContext, phone: string, clientId: number | null, overrides: Partial<Types.AddClientRequestBody> = {}) {
 
     const body = buildAddClientBody(phone, clientId, overrides)
@@ -26,7 +26,7 @@ export async function addClient(request: APIRequestContext, phone: string, clien
 
 }
 
-//Функция поиска client_id
+// Ищем ID клиента по телефону
 export async function searchClientId(request: APIRequestContext, phone: string): Promise<number | null> {
 
     const { response, responseBody } = await searchClient(request, 0, phone)
@@ -39,7 +39,7 @@ export async function searchClientId(request: APIRequestContext, phone: string):
     const clientId = Number(responseBody.client_id)
     if (!Number.isSafeInteger(clientId)) {
         throw new Error(
-            `Некорректный client_id: ${responseBody.client_id}`
+            `Не получилось использовать client_id из ответа: ${responseBody.client_id}`
         )
     }
 
@@ -47,7 +47,7 @@ export async function searchClientId(request: APIRequestContext, phone: string):
 
 }
 
-//Функция поиска свободного номера телефона
+// Ищем номер телефона, которого нет в лояльности
 export async function findUnusedPhone(request: APIRequestContext): Promise<string> {
 
     const maxAttempts = 20
@@ -61,12 +61,12 @@ export async function findUnusedPhone(request: APIRequestContext): Promise<strin
     }
 
     throw new Error(
-        `Не удалось подобрать свободный телефон за ${maxAttempts} попыток`
+        `Свободный номер телефона не найден за ${maxAttempts} попыток`
     )
 
 }
 
-//Функция создания тестового клиента 
+// Создаём нового клиента для теста
 export async function createTestClient(request: APIRequestContext, overrides: Partial<Types.AddClientRequestBody> = {}): Promise<{ phone: string; clientId: number }> {
 
     const phone = await findUnusedPhone(request)
@@ -76,7 +76,7 @@ export async function createTestClient(request: APIRequestContext, overrides: Pa
     const clientId = await searchClientId(request, phone)
     if (clientId === null) {
         throw new Error(
-            `Созданный клиент с телефоном ${phone} не найден`
+            `Создали клиента, но не нашли его по телефону ${phone}`
         )
     }
 
@@ -87,7 +87,7 @@ export async function createTestClient(request: APIRequestContext, overrides: Pa
 
 }
 
-//Функция генерации телефонного номера
+// Генерируем случайный номер телефона
 export function generateClientPhone(): string {
 
     let phoneNumber = `79`
@@ -98,7 +98,7 @@ export function generateClientPhone(): string {
 
 }
 
-//Функция создания массива goods_data
+// Собираем список товаров для продажи
 export function buildGoodsData(): Types.GoodsData[] {
 
     const price = 100
@@ -114,8 +114,8 @@ export function buildGoodsData(): Types.GoodsData[] {
             code: `2027`,
             barcode: `50055005`,
             vendor_code: `2702`,
-            name: `Товар из автотеста`,
-            variant: `Вариант товара из автотеста`,
+            name: `Тестовый товар`,
+            variant: `Тестовый вариант товара`,
             price,
             quantity,
             total: price * quantity,
@@ -131,7 +131,7 @@ export function buildGoodsData(): Types.GoodsData[] {
 
 }
 
-//Функция создания тела запроса searchclient
+// Собираем тело запроса searchclient
 export function buildSearchClientBody(searchMode: 0 | 1 | 2 | 3, searchValue: string, overrides: Partial<Types.SearchClientRequestBody> = {}): Types.SearchClientRequestBody {
 
     return {
@@ -142,7 +142,7 @@ export function buildSearchClientBody(searchMode: 0 | 1 | 2 | 3, searchValue: st
 
 }
 
-//Функция отправки запроса searchclient
+// Отправляем запрос searchclient
 export async function searchClient(request: APIRequestContext, searchMode: 0 | 1 | 2 | 3, searchValue: string, overrides: Partial<Types.SearchClientRequestBody> = {}) {
 
     const body = buildSearchClientBody(searchMode, searchValue, overrides)
@@ -158,7 +158,7 @@ export async function searchClient(request: APIRequestContext, searchMode: 0 | 1
 
 }
 
-//Функция подсчета баланса клиента
+// Складываем баланс из всех записей клиента
 export function calculateTotalBalance(items: Types.BalanceItem[]): number {
 
     return items.reduce((total, item) => {
@@ -167,7 +167,7 @@ export function calculateTotalBalance(items: Types.BalanceItem[]): number {
 
 }
 
-//Функция построения тела запроса getclientfullbalance
+// Собираем тело запроса getclientfullbalance
 export function buildGetClientFullBalanceBody(clientId: number): Types.GetClientFullBalanceRequestBody {
 
     return {
@@ -176,7 +176,7 @@ export function buildGetClientFullBalanceBody(clientId: number): Types.GetClient
 
 }
 
-//Функция отправки запроса getclientfullbalance
+// Отправляем запрос getclientfullbalance
 export async function getClientFullBalance(request: APIRequestContext, clientId: number) {
 
     const body = buildGetClientFullBalanceBody(clientId)
@@ -192,7 +192,7 @@ export async function getClientFullBalance(request: APIRequestContext, clientId:
 
 }
 
-//Функция построения тела getclientcards
+// Собираем тело запроса getclientcards
 export function buildGetClientCardsBody(clientId: number): Types.GetClientCards {
 
     return {
@@ -201,7 +201,7 @@ export function buildGetClientCardsBody(clientId: number): Types.GetClientCards 
 
 }
 
-//Функция отправки запроса getclientcards
+// Отправляем запрос getclientcards
 export async function getClientCards(request: APIRequestContext, clientId: number) {
 
     const body = buildGetClientCardsBody(clientId)
@@ -213,7 +213,7 @@ export async function getClientCards(request: APIRequestContext, clientId: numbe
     })
 
 }
-//Функция построения тела replacecard
+// Собираем тело запроса replacecard
 export function buildReplaceCardBody(searchMode: 0 | 1, searchValue: string, clientId: number): Types.ReplaceCard {
 
     return {
@@ -225,7 +225,7 @@ export function buildReplaceCardBody(searchMode: 0 | 1, searchValue: string, cli
 }
 
 
-//Функция отправки запроса replacecard
+// Отправляем запрос replacecard
 export async function replaceCard(request: APIRequestContext, searchMode: 0 | 1, searchValue: string, clientId: number) {
 
     const body = buildReplaceCardBody(searchMode, searchValue, clientId)
@@ -240,7 +240,7 @@ export async function replaceCard(request: APIRequestContext, searchMode: 0 | 1,
     })
 
 }
-//Функция генерации кода карты из тестового диапазона
+// Получаем номер карты из диапазона для тестов
 export function generateCardCode(): string {
 
     const firstCardNumber = 99_900_000_000
@@ -253,7 +253,7 @@ export function generateCardCode(): string {
 
 }
 
-//Функция построения тела blockcard
+// Собираем тело запроса blockcard
 export function buildBlockCardBody(cardId: number): Types.BlockCard {
 
     return {
@@ -262,7 +262,7 @@ export function buildBlockCardBody(cardId: number): Types.BlockCard {
 
 }
 
-//Функция отправки запроса blockcard
+// Отправляем запрос blockcard
 export async function blockCard(request: APIRequestContext, cardId: number) {
 
     const body = buildBlockCardBody(cardId)
@@ -275,7 +275,7 @@ export async function blockCard(request: APIRequestContext, cardId: number) {
 
 }
 
-//Функция построения тела getconfirmationcode
+// Собираем тело запроса getconfirmationcode
 export function buildGetConfirmationCodeBody(clientId: number, outerSystemsInterfaceType: 5): Types.GetConfirmationCode {
 
     return {
@@ -285,7 +285,7 @@ export function buildGetConfirmationCodeBody(clientId: number, outerSystemsInter
 
 }
 
-//Функция отправки запроса getconfirmationcode
+// Отправляем запрос getconfirmationcode
 export async function getConfirmationCode(request: APIRequestContext, clientId: number, outerSystemsInterfaceType: 5) {
 
     const body = buildGetConfirmationCodeBody(clientId, outerSystemsInterfaceType)

@@ -2,7 +2,7 @@ import type { APIRequestContext } from '@playwright/test'
 import * as api from '../api.config'
 import type * as Types from '../types/RequestTypes'
 
-//Функция построения тела searchgiftcard
+// Собираем тело запроса searchgiftcard
 export function buildSearchGiftCardBody(barcode: string): Types.SearchGiftCard {
 
     return {
@@ -11,7 +11,7 @@ export function buildSearchGiftCardBody(barcode: string): Types.SearchGiftCard {
 
 }
 
-//Функция отправки запроса searchgiftcard
+// Отправляем запрос searchgiftcard
 export async function searchGiftCard(request: APIRequestContext, barcode: string) {
 
     const body = buildSearchGiftCardBody(barcode)
@@ -24,7 +24,7 @@ export async function searchGiftCard(request: APIRequestContext, barcode: string
 
 }
 
-//Функция отправки запроса getprogramgiftcard (GET без тела)
+// Отправляем запрос getprogramgiftcard (GET без тела)
 export async function getProgramGiftCard(request: APIRequestContext) {
 
     return api.sendApiRequest<undefined, Types.GetProgramGiftCardResponseBody>(request, {
@@ -35,32 +35,32 @@ export async function getProgramGiftCard(request: APIRequestContext) {
 
 }
 
-//Функция получения id первой программы с доступной генерацией сертификатов
+// Берём ID первой программы, в которой можно создавать сертификаты
 export async function getGiftCardProgramId(request: APIRequestContext): Promise<number> {
 
     const getProgramGiftCardResult = await getProgramGiftCard(request)
 
     if (getProgramGiftCardResult.response.status() !== 200) {
-        throw new Error(`Не удалось получить программы подарочных сертификатов: getprogramgiftcard вернул HTTP ${getProgramGiftCardResult.response.status()}.`)
+        throw new Error(`Не получили список программ сертификатов: getprogramgiftcard вернул статус ${getProgramGiftCardResult.response.status()}.`)
     }
 
     const programs = getProgramGiftCardResult.responseBody?.data
 
     if (!Array.isArray(programs)) {
-        throw new Error('Некорректный ответ getprogramgiftcard: отсутствует массив программ data.')
+        throw new Error('В ответе getprogramgiftcard поле data должно быть массивом программ.')
     }
 
     const program = programs.find(program => program.generate_gift_card === true)
 
     if (!program) {
-        throw new Error('Не найдена программа подарочных сертификатов с generate_gift_card = true. Создайте программу вручную в ЛК и включите генерацию сертификатов. Подготовка описана в README.md.')
+        throw new Error('Не нашли программу с generate_gift_card = true. Нужно создать программу сертификатов в личном кабинете и включить генерацию. Как это сделать, написано в README.md.')
     }
 
     return program.id
 
 }
 
-//Функция построения тела generategiftcard
+// Собираем тело запроса generategiftcard
 export function buildGenerateGiftCardBody(programId: number): Types.GenerateGiftCard {
 
     return {
@@ -69,7 +69,7 @@ export function buildGenerateGiftCardBody(programId: number): Types.GenerateGift
 
 }
 
-//Функция отправки запроса generategiftcard
+// Отправляем запрос generategiftcard
 export async function generateGiftCard(request: APIRequestContext) {
 
     const programId = await getGiftCardProgramId(request)
