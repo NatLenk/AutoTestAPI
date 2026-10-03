@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 import * as clientsHelper from '../../helpers/clientsHelper'
 import * as referralHelper from '../../helpers/referralHelper'
 
-test('referral - получаем клиентов, которых пригласил другой клиент', async ({ request }) => {
+test('referral - получаем рефералов', async ({ request }) => {
 
     const { clientId: referrerClientId } = await clientsHelper.createTestClient(request)
 
