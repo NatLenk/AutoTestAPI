@@ -4,11 +4,11 @@
 
 ## Что лежит в проекте
 
-- `tests` — сами тесты. Разложил их по папкам, а файлы назвал по методам API.
-- `helpers` — функции, которые собирают данные и отправляют запросы. Использую их, чтобы не писать одно и то же в каждом тесте.
-- `types/RequestTypes.ts` — типы для данных, которые отправляю и получаю в запросах.
-- `api.config.ts` — общие функции для запросов: собирают URL, выводят запрос и ответ в консоль, возвращают дату и время.
-- `playwright.config.ts` — настройки запуска тестов.
+- `tests` - сами тесты. Разложил их по папкам, а файлы назвал по методам API.
+- `helpers` - функции, которые собирают данные и отправляют запросы. Использую их, чтобы не писать одно и то же в каждом тесте.
+- `types/RequestTypes.ts` - типы для данных, которые отправляю и получаю в запросах.
+- `api.config.ts` - общие функции для запросов: собирают URL, выводят запрос и ответ в консоль, возвращают дату и время.
+- `playwright.config.ts` - настройки запуска тестов.
 
 ## Как запустить тесты
 
@@ -56,15 +56,15 @@ npx playwright test searchclient
 
 В папке `tests/clients` семь файлов с тестами. Во всех запросах использую POST:
 
-Функции для этих запросов находятся в `helpers/clientsHelper.ts`, а типы запросов и ответов — в `types/RequestTypes.ts`.
+Функции для этих запросов находятся в `helpers/clientsHelper.ts`, а типы запросов и ответов - в `types/RequestTypes.ts`.
 
 Для создания клиента сначала ищу свободный номер телефона через `findUnusedPhone`. Функция `createTestClient` добавляет клиента и находит его ID по телефону. В большинстве тестов использую её, поэтому заранее создавать клиентов не нужно. В отдельном тесте `searchclient` просто передаю случайный телефон и проверяю статус 200.
 
 Для `blockcard`, `getclientcards` и исходной карты в `replacecard` функция `generateCardCode` создаёт случайный 11-значный номер с префиксом `998`. Код и баркод одинаковые, карта создаётся через `addclient` вместе с клиентом. Генерация не проверяет наличие номера в API и не гарантирует уникальность между запусками.
 
-Для новой карты в `replacecard` функция `findUnusedReplacementCard` проверяет случайные номера из подготовленного диапазона `99900000000`–`99900009999` и выбирает неактивированную (`state: '0'`) рабочую (`card_state: '0'`) карту. Если за 20 попыток подходящая карта не найдена, тест завершается с ошибкой подготовки данных. По [документации API](https://docs.kilbil.ru/) карта для замены должна быть неиспользованной, без операций и заполненных данных у прикреплённого клиента.
+Для новой карты в `replacecard` функция `findUnusedReplacementCard` проверяет случайные номера из подготовленного диапазона `99900000000`-`99900009999` и выбирает неактивированную (`state: '0'`) рабочую (`card_state: '0'`) карту. Если за 20 попыток подходящая карта не найдена, тест завершается с ошибкой подготовки данных. По [документации API](https://docs.kilbil.ru/) карта для замены должна быть неиспользованной, без операций и заполненных данных у прикреплённого клиента.
 
-В `replacecard` использую `search_mode: 1` — поиск новой карты по внутреннему номеру. Проверяю HTTP 200, `result_code: '0'` и фактическую замену: поиск клиента по телефону должен вернуть новый номер карты.
+В `replacecard` использую `search_mode: 1` - поиск новой карты по внутреннему номеру. Проверяю HTTP 200, `result_code: '0'` и фактическую замену: поиск клиента по телефону должен вернуть новый номер карты.
 
 Запустить все тесты клиентов:
 
@@ -82,7 +82,7 @@ npx playwright test tests/clients/getclientfullbalance.spec.ts
 
 В папке `tests/tags` пять тестов. Во всех запросах использую POST:
 
-Функции для этих запросов находятся в `helpers/tagsHelper.ts`, а типы — в `types/RequestTypes.ts`.
+Функции для этих запросов находятся в `helpers/tagsHelper.ts`, а типы - в `types/RequestTypes.ts`.
 
 Перед запуском нужно создать теги и группы тегов в личном кабинете. В тестах беру первый тег из `tags_list`, поэтому список не должен быть пустым. Для `updateclienttag` этот тег должен быть счётчиком (`tag_type: counter`).
 
@@ -122,7 +122,7 @@ npx playwright test tests/operation/processsale.spec.ts
 
 ## Код подтверждения
 
-В папке `tests/confirm code` два теста. В обоих использую POST:
+В папке `tests/confirmcode` два теста. В обоих использую POST:
 
 Функции для запросов находятся в `helpers/confirmcodeHelper.ts`. Использую типы `AskConfirmPhone` и `CheckConfirmPhoneCode` из `types/RequestTypes.ts`.
 
@@ -131,20 +131,20 @@ npx playwright test tests/operation/processsale.spec.ts
 Запустить оба теста:
 
 ```bash
-npx playwright test "tests/confirm code"
+npx playwright test "tests/confirmcode"
 ```
 
 Запустить только запрос без кода:
 
 ```bash
-npx playwright test "tests/confirm code/checkconfirmphonecode.spec.ts"
+npx playwright test "tests/confirmcode/checkconfirmphonecode.spec.ts"
 ```
 
 ## Промокоды
 
 В папке `tests/promocode` четыре теста. Во всех запросах использую POST:
 
-Функции для этих запросов находятся в `helpers/promocodeHelper.ts`, а типы — в `types/RequestTypes.ts`.
+Функции для этих запросов находятся в `helpers/promocodeHelper.ts`, а типы - в `types/RequestTypes.ts`.
 
 Перед запуском нужно создать группу промокодов и записать её ID в `list_id` функции `buildGenerate_PromocodeBody`. Диапазон промокодов указан выше в подготовке к запуску.
 
@@ -202,9 +202,9 @@ npx playwright test tests/nomenclature/goodslist.spec.ts
 
 ## Подарочные сертификаты
 
-В папке `tests/giftcard` три теста. Для поиска и создания сертификата использую POST, для получения программ — GET.
+В папке `tests/giftcard` три теста. Для поиска и создания сертификата использую POST, для получения программ - GET.
 
-Функции для этих запросов находятся в `helpers/giftcardHelper.ts`, а типы запросов и ответов — в `types/RequestTypes.ts`.
+Функции для этих запросов находятся в `helpers/giftcardHelper.ts`, а типы запросов и ответов - в `types/RequestTypes.ts`.
 
 Перед запуском нужно создать тестовую программу подарочных сертификатов в личном кабинете и включить генерацию (`generate_gift_card: true`). В функции `getGiftCardProgramId` беру ID первой программы с включённой генерацией.
 
@@ -276,7 +276,7 @@ npx playwright test tests/planfact/getsalesindicesslides.spec.ts
 
 ## Другое
 
-В папке `tests/other` четыре теста. Для `legal_info` использую GET, для остальных запросов — POST.
+В папке `tests/other` четыре теста. Для `legal_info` использую GET, для остальных запросов - POST.
 
 Функции для этих запросов находятся в `helpers/otherHelper.ts`. Типы `CloseSession`, `ExchangePosSettings` и `GenerateCard` лежат в `types/RequestTypes.ts`.
 
