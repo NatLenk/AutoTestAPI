@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import * as confirmcodeHelper from '../../helpers/confirmcodeHelper'
+import * as confirmcodeHelper from '../../helpers/confirmCodeHelper'
 import * as clientsHelper from '../../helpers/clientsHelper'
 
 test('askconfirmphone - запрашиваем код для подтверждения', async ({ request }) => {

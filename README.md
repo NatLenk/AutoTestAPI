@@ -124,7 +124,7 @@ npx playwright test tests/operation/processsale.spec.ts
 
 В папке `tests/confirmcode` два теста. В обоих использую POST:
 
-Функции для запросов находятся в `helpers/confirmcodeHelper.ts`. Использую типы `AskConfirmPhone` и `CheckConfirmPhoneCode` из `types/RequestTypes.ts`.
+Функции для запросов находятся в `helpers/confirmCodeHelper.ts`. Использую типы `AskConfirmPhone` и `CheckConfirmPhoneCode` из `types/RequestTypes.ts`.
 
 Клиент и телефон создаются внутри каждого теста.
 
