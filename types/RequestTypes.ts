@@ -1,4 +1,4 @@
-//Типизирование тела запроса searchclient
+// Поля запроса searchclient
 export type GoodsData = {
     code: string,
     barcode?: string,
@@ -40,8 +40,17 @@ export type SearchClientRequestBody = {
 
 }
 
-//Типизирование тела запроса addclient
-export type SpecialDay = {
+export type SearchClientResponseBody = {
+    state: null | '0' | '1' | '2' | '3' | '4'
+    client_id: string | null
+    card_id: string | null
+    card_state: '0' | '2' | '3' | null
+    card_code: string | null
+    card_barcode: string | null
+}
+
+// Поля запроса addclient
+type SpecialDay = {
     id: number,
     value: string
 }
@@ -66,58 +75,107 @@ export type AddClientRequestBody = {
     card_barcode?: string
 }
 
-//Типизирование тела запроса getclientfullbalance
+// Поля запроса getclientfullbalance
+export type BalanceItem = {
+    balance: string,
+    begin_dt: string | null,
+    expire_dt: string | null
+}
+
 export type GetClientFullBalanceRequestBody = {
     client_id: number
 }
 
-//Типизирование тела запроса getclientcards
+// Поля запроса getclientcards
 export type GetClientCards = {
     client_id: number,
     outer_systems_interface_type?: null | 4 | 5 | 10
 }
 
-//Типизирование тела запроса replacecard
+// Поля запроса replacecard
 export type ReplaceCard = {
     search_mode: 0 | 1,
     search_value: string,
     client_id: number
 }
 
-//Типизирование тела запроса blockcard
+// Поля ответа replacecard
+export type ReplaceCardResponseBody = {
+    result_code: string | null
+    result_text?: string | null
+}
+
+// Поля запроса blockcard
 export type BlockCard = {
     card_id: number
 }
 
-//Типизирование тела запроса getconfirmationcode
+// Поля ответа blockcard
+export type BlockCardResponseBody = {
+    result_code: string | number
+    result_text: string
+}
+
+// Поля запроса getconfirmationcode
 export type GetConfirmationCode = {
-    client_id: number,
+    client_id: number
     outer_systems_interface_type: 5
 }
 
-//Типизирование тела запроса getlisttags
+// Поля запроса getlisttags
 export type GetListTags = {
     group_id?: number | null
 }
 
-//Типизирование тела запроса getclienttags
-export type GetClientTags = {
-    client_id: number
+// Поля успешного ответа getlisttags
+export type GetListTagsResponseBody = {
+    result_code: number
+    tags_list: {
+        tag_id: number
+        tag_name?: string
+        group_id?: number
+    }[]
 }
 
-//Типизирование тела запроса addclienttags
+// Поля запроса getclienttagsinfo
+export type GetClientTags = {
+    client_id: number,
+    tag_id?: number | null
+}
+
+// Поля успешного ответа getclienttagsinfo
+export type GetClientTagsInfoResponseBody = {
+    result_code: number
+    data: {
+        tag_id: number
+        tag_type: string
+        avalue?: number
+    }[]
+}
+
+// Поля запроса addclienttags
 export type AddClientTags = {
     client_id: number,
     tags: number[]
 }
 
-//Типизирование тела запроса deleteclienttags
+// Поля запроса updateclienttag
+export type UpdateClientTag = {
+    client_id: number,
+    tag: {
+        id: number,
+        value: number,
+        action: string
+    }
+}
+
+// Поля запроса deleteclienttags
 export type DeleteClientTags = {
     client_id: number,
     tags: number[]
 }
 
-//Типизирование тела запроса processsale
+// Поля запроса processsale
 export type ProcessSale = {
     client_id: number | null,
     type: 0 | 1,
@@ -144,7 +202,7 @@ export type ProcessSale = {
     pos_discounts_are_used?: 0 | 1
 }
 
-//Типизирование тела запроса confirmsale
+// Поля запроса confirmsale
 type Payments = {
     payment_amount: number,
     type: 0 | 1 | 2 | 3 | 99,
@@ -167,7 +225,7 @@ export type ConfirmSale = {
     }[]
 }
 
-//Типизирование тела запроса manualadd
+// Поля запроса manualadd
 export type ManualAdd = {
     client_id: number,
     bonus_in?: number,
@@ -177,19 +235,28 @@ export type ManualAdd = {
     expire_date?: string
 }
 
-//Типизирование тела запроса getmovesbyclient
+export type ManualAddResponseBody = {
+    result_code: number
+    result_text: string
+}
+
+// Поля запроса getmovesbyclient
 export type GetMovesByClient = {
     client_id: number
 }
 
-//Типизирование тела запроса getdetailingbymove
-export type GetDetailingByMove = {
-    id?: number,
-    move_id?: string,
-    move_date?: string
+// Поля ответа getmovesbyclient
+export type GetMovesByClientResponseBody = {
+    result_code: string
+    client_moves: unknown[]
 }
 
-//Типизирование тела запроса askconfirmphone
+// Поля запроса getdetailingbymove
+export type GetDetailingByMove =
+    | { id: number; move_id?: string; move_date?: string }
+    | { id?: number; move_id: string; move_date?: string }
+
+// Поля запроса askconfirmphone
 export type AskConfirmPhone = {
     client_id: number | null,
     phone: string,
@@ -197,41 +264,55 @@ export type AskConfirmPhone = {
     send_type?: 0 | 1
 }
 
-//Типизирование тела запроса checkconfirmphonecode
+// Поля запроса checkconfirmphonecode
 export type CheckConfirmPhoneCode = {
     client_id: number | null,
     phone: string,
     code?: string
 }
 
-//Типизирование тела запроса searchpromocode
+// Поля запроса searchpromocode
 export type SearchPromoCode = {
     promo_code: string
 }
 
-//Типизирование тела запроса reservedpromocode
+// Поля запроса getclientpromocodes
+export type GetClientPromocodes = {
+    client_id: number,
+    active_only?: boolean | null
+}
+
+// Поля запроса reservedpromocode
 export type ReservedPromoCode = {
     promo_code: string,
     set_reserved: boolean
 }
 
-//Типизирование тела запроса generate_promocode
+// Поля запроса generate_promocode
 export type Generate_PromoCode = {
+    client_id?: number | null
     list_id: number
 }
 
-//Типизирование тела запроса getactionslist
+// Поля успешного ответа generate_promocode
+export type GeneratePromoCodeResponseBody = {
+    result_code: string
+    result_text: string
+    promocode: string
+}
+
+// Поля запроса getactionslist
 export type GetActionsList = {
     trade_object_id: number | null,
     goods: string[]
 }
 
-//Типизирование тела запроса getprograms
+// Поля запроса getprograms
 export type GetPrograms = {
 
 }
 
-//Типизирование тела запроса goods
+// Поля запроса goods
 export type Goods = {
     is_group?: boolean,
     delete_mark?: boolean,
@@ -241,39 +322,68 @@ export type Goods = {
     full_name?: string
 }[]
 
-//Типизирование тела запроса goodslist
-type Inside = {
+// Поля запроса goodslist
+export type Inside = {
     code: string,
     variant?: string,
     K?: number
 }
 
 export type GoodsList = {
-    id: number,
+    ID: number,
     inside: Inside[]
 }[]
 
-//Типизирование тела запроса searchgiftcard
+// Поля запроса searchgiftcard
 export type SearchGiftCard = {
     barcode: string
 }
 
-//Типизирование тела запроса generategiftcard
+// Поля запроса generategiftcard
 export type GenerateGiftCard = {
     program_id: number
 }
 
-//Типизирование тела запроса getwalletlink
+// Поля успешного ответа getprogramgiftcard
+export type GiftCardProgram = {
+    id: number
+    aname: string
+    description: string
+    generate_gift_card: boolean
+}
+
+export type GetProgramGiftCardResponseBody = {
+    result_code: string
+    data: GiftCardProgram[]
+}
+
+// Поля успешного ответа generategiftcard
+export type GenerateGiftCardResponseBody = {
+    result_code: string
+    result_text: string
+    gc_code: string
+    gc_barcode: string
+    gc_state: 0 | 1 | 2 | 3 | 4
+    gc_state_text: string
+    gc_balance: number
+}
+
+// Поля запроса referral
+export type Referral = {
+    client_id: number
+}
+
+// Поля запроса getwalletlink
 export type GetWalletLink = {
     client_id: number
 }
 
-//Типизирование тела запроса getsalesindicesslides
+// Поля запроса getsalesindicesslides
 export type GetSalesIndicesSlides = {
     date?: string
 }
 
-//Типизирование тела запроса closesession
+// Поля запроса closesession
 type PaymentsSession = {
     payment_amount?: number,
     type?: 0 | 1 | 2 | 3 | 99
@@ -285,14 +395,14 @@ export type CloseSession = {
     shift_number: number
 }
 
-//Типизирование тела запроса exchangepossettings
+// Поля запроса exchangepossettings
 export type ExchangePosSettings = {
     pos_program: string,
     version: string,
-    autoupdate: 0 | 1
+    autoupdate?: 0 | 1
 }
 
-//Типизирование тела запроса generatecard
+// Поля запроса generatecard
 export type GenerateCard = {
     client_id: number,
     outer_systems_interface_type: 4

@@ -1,19 +1,10 @@
-import dotenv from 'dotenv';
-import path from 'path';
-import { GoodsData } from './types/RequestTypes';
-import { APIResponse } from '@playwright/test';
+import type { APIResponse, APIRequestContext } from '@playwright/test';
 
-dotenv.config({ path: path.resolve(__dirname, './.env') });
 
-const baseUrl = process.env.baseUrl as string
-const token = process.env.token as string
+const baseUrl = process.env.BASE_URL!
+const token = process.env.API_TOKEN!
 
-/*export const apiConfig = {
-    baseUrl,
-    token
-};*/
-
-//Функция создания url с проверкой и удалением лишних слешей перед endpoint
+// Собираем URL и убираем лишние слеши в начале endpoint
 export function buildLoadUrl(endpoint: string): string {
     const normalizedEndpoint = endpoint.replace(/^\/+/, '');
 
@@ -24,7 +15,28 @@ export function buildLoadUrl(endpoint: string): string {
     return url.toString();
 }
 
-//Функция получение локальной даты компьютера
+// Выводим запрос в консоль, токен скрываем
+export function logApiRequest(
+    url: string,
+    body: unknown
+) {
+    const safeUrl = new URL(url)
+    safeUrl.searchParams.set('h', '***')
+
+    console.log('REQUEST_URL', safeUrl.toString())
+    console.log('REQUEST_BODY', JSON.stringify(body, null, 2))
+}
+
+// Выводим статус и ответ в консоль
+export function logApiResponse(
+    response: APIResponse,
+    responseBody: unknown
+) {
+    console.log('STATUS', response.status())
+    console.log('RESPONSE_BODY', JSON.stringify(responseBody, null, 2))
+}
+
+// Берём дату и время компьютера в формате ЧЧ:ММ:СС ДД.ММ.ГГГГ
 export function getLocalDateTime(date = new Date()): string {
     const pad = (value: number): string => value.toString().padStart(2, '0')
 
@@ -38,57 +50,91 @@ export function getLocalDateTime(date = new Date()): string {
     return `${hours}:${minutes}:${seconds} ${day}.${month}.${year}`
 }
 
-//Функция логирования запроса
-export function logApiRequest(
-    url: string,
-    body: unknown
-) {
-    console.log('REQUEST_URL', url)
-    console.log('REQUEST_BODY', JSON.stringify(body, null, 2))
+type HttpMethod =
+    | 'GET'
+    | 'POST'
+    | 'PUT'
+    | 'PATCH'
+    | 'DELETE'
+    | 'HEAD'
+    | 'OPTIONS'
+
+type RequestOptions<TPayload> = {
+    endpoint: string
+    method: HttpMethod
+    payload: TPayload
+    params?: Record<string, string | number | boolean>
+    headers?: Record<string, string>
+    timeout?: number
+    responseType?: 'json' | 'text' | 'none'
 }
 
-//Функция логирования ответа
-export function logApiResponse(
-    response: APIResponse,
-    responseBody: unknown
-) {
-    console.log('STATUS', response.status())
-    console.log('RESPONSE_BODY', JSON.stringify(responseBody, null, 2))
+type ApiResult<TPayload, TResponse> = {
+    body: TPayload
+    response: APIResponse
+    responseBody: TResponse
 }
 
-//Функция генерации телефонного номера
-export function generateClientPhone(): string {
-    let phoneNumber = `79`
-    for (let i = 0; i < 9; i++) {
-        phoneNumber += Math.floor(Math.random() * 10).toString();
+export async function sendApiRequest<TPayload, TResponse = unknown>(request: APIRequestContext, options: RequestOptions<TPayload>): Promise<ApiResult<TPayload, TResponse>> {
+
+    const {
+        endpoint,
+        method,
+        payload,
+        params = {},
+        headers,
+        timeout,
+        responseType = 'json'
+    } = options
+
+    if ((method === 'GET' || method === 'HEAD') && payload !== undefined) {
+        throw new Error(`${method}: параметры нужно передать в params, а payload убрать`)
     }
-    return phoneNumber;
-}
+    const url = new URL(buildLoadUrl(endpoint))
 
-//Функция создания массива goods_data
-export function buildGoodsData(): GoodsData[] {
-    const price = 100
-    const quantity = 2
-    const discountedPrice = 100
-    const goodPromoCode = `01234567891`
+    for (const [name, value] of Object.entries(params)) {
+        url.searchParams.set(name, String(value))
+    }
 
-    return [
-        {
-            code: `2027`,
-            barcode: `50055005`,
-            vendor_code: `2702`,
-            name: `Товар из автотеста`,
-            variant: `Вариант товара из автотеста`,
-            price,
-            quantity,
-            total: price * quantity,
-            minPrice: 0,
-            maxDiscount: 100,
-            discounted_price: discountedPrice,
-            discounted_total: discountedPrice * quantity,
-            good_promo: [
-                goodPromoCode
-            ]
+    console.log('REQUEST_METHOD', method)
+    logApiRequest(url.toString(), payload)
+
+    const response = await request.fetch(url.toString(), {
+        method,
+        data: payload,
+        headers,
+        timeout,
+        failOnStatusCode: false,
+        maxRetries: 0
+    })
+
+    let responseBody: unknown = null
+
+    if (responseType !== 'none') {
+        const text = await response.text()
+
+        if (responseType === 'text') {
+            responseBody = text
+        } else {
+            try {
+                responseBody = JSON.parse(text)
+            } catch (error) {
+                logApiResponse(response, text)
+
+                throw new Error(
+                    `Не получилось прочитать ответ как JSON: ${method} ${endpoint}, ` +
+                    `HTTP ${response.status()}`,
+                    { cause: error }
+                )
+            }
         }
-    ]
+    }
+
+    logApiResponse(response, responseBody)
+
+    return {
+        body: payload,
+        response,
+        responseBody: responseBody as TResponse
+    }
 }

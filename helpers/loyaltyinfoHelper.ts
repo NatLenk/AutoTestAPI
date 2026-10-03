@@ -1,0 +1,48 @@
+import type { APIRequestContext } from '@playwright/test'
+import * as api from '../api.config'
+import type * as Types from '../types/RequestTypes'
+
+// Собираем тело запроса getactionslist
+export function buildGetActionsListBody(tradeObjectId: number | null, goods: string[]): Types.GetActionsList {
+
+    return {
+        trade_object_id: tradeObjectId,
+        goods
+    }
+
+}
+
+// Отправляем запрос getactionslist
+export async function getActionsList(request: APIRequestContext, tradeObjectId: number | null, goods: string[]) {
+
+    const body = buildGetActionsListBody(tradeObjectId, goods)
+
+    return api.sendApiRequest(request, {
+        endpoint: 'getactionslist',
+        method: 'POST',
+        payload: body
+    })
+
+}
+
+// Собираем тело запроса getprograms
+export function buildGetProgramsBody(): Types.GetPrograms {
+
+    return {
+
+    }
+
+}
+
+// Отправляем запрос getprograms
+export async function getPrograms(request: APIRequestContext) {
+
+    const body = buildGetProgramsBody()
+
+    return api.sendApiRequest(request, {
+        endpoint: 'getprograms',
+        method: 'POST',
+        payload: body
+    })
+
+}
