@@ -24,6 +24,13 @@ export async function goods(request: APIRequestContext, partial: boolean, isGrou
 
     const body = buildGoodsBody(isGroup, deleteMark, BC, fullName, overrides)
 
+    if (!partial && !body.some(good => good.code === '1234')) {
+        body.push({
+            code: '1234',
+            name: 'Тестовый товар для акции 1234'
+        })
+    }
+
     return api.sendApiRequest(request, {
         endpoint: 'goods',
         method: 'POST',
