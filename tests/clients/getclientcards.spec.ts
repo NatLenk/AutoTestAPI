@@ -3,7 +3,7 @@ import * as clientsHelper from '../../helpers/clientsHelper'
 
 test('getclientcards - получаем карты клиента', async ({ request }) => {
 
-    const cardCode = `999${Date.now()}`
+    const cardCode = clientsHelper.generateCardCode()
     const cardBarcode = cardCode
 
     const { clientId } = await clientsHelper.createTestClient(request, {

@@ -14,7 +14,7 @@ test('updateclienttag - увеличиваем значение тега-счё�
 
     const getClientTagInfo = await tagsHelper.getClientTagsInfo(request, clientId, tagId)
     expect(getClientTagInfo.response.status()).toBe(200)
-    expect(getClientTagInfo.responseBody.result_code).toBe('0')
+    expect(getClientTagInfo.responseBody.result_code).toBe(0)
 
     const clientTag = getClientTagInfo.responseBody.data.find((tag: { tag_id: number }) => tag.tag_id === tagId)
     if (!clientTag) {

@@ -101,8 +101,8 @@ export type ReplaceCard = {
 
 // Поля ответа replacecard
 export type ReplaceCardResponseBody = {
-    result_code: string
-    result_text?: string
+    result_code: string | null
+    result_text?: string | null
 }
 
 // Поля запроса blockcard
@@ -145,7 +145,7 @@ export type GetClientTags = {
 
 // Поля успешного ответа getclienttagsinfo
 export type GetClientTagsInfoResponseBody = {
-    result_code: string
+    result_code: number
     data: {
         tag_id: number
         tag_type: string

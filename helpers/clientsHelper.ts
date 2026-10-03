@@ -1,4 +1,5 @@
 import { expect, APIRequestContext } from '@playwright/test'
+import { randomInt } from 'node:crypto'
 import * as api from '../api.config'
 import type * as Types from '../types/RequestTypes'
 
@@ -240,16 +241,30 @@ export async function replaceCard(request: APIRequestContext, searchMode: 0 | 1,
     })
 
 }
-// Получаем номер карты из диапазона 99900000000–99900009999 (10 000 карт)
+// Генерируем случайный 11-значный номер карты с префиксом 998
 export function generateCardCode(): string {
 
-    const firstCardNumber = 99_900_000_000
+    return `998${randomInt(0, 100_000_000).toString().padStart(8, '0')}`
 
-    const cardCount = 10_000
+}
 
-    const cardNumber = firstCardNumber + Date.now() % cardCount
+// Ищем неактивированную рабочую карту из подготовленного диапазона для замены
+export async function findUnusedReplacementCard(request: APIRequestContext): Promise<string> {
 
-    return cardNumber.toString()
+    const maxAttempts = 20
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        const cardCode = (99_900_000_000 + randomInt(0, 10_000)).toString()
+        const { response, responseBody } = await searchClient(request, 2, cardCode)
+        expect(response.status()).toBe(200)
+
+        if (responseBody.card_id !== null && responseBody.state === '0' && responseBody.card_state === '0') {
+            return cardCode
+        }
+    }
+
+    throw new Error(
+        `Не нашли карту для замены за ${maxAttempts} попыток. Подготовьте неиспользованные карты в диапазоне 99900000000–99900009999`
+    )
 
 }
 
