@@ -240,14 +240,14 @@ export async function replaceCard(request: APIRequestContext, searchMode: 0 | 1,
     })
 
 }
-// Получаем номер карты из диапазона для тестов
+// Получаем номер карты из диапазона 99900000000–99900009999 (10 000 карт)
 export function generateCardCode(): string {
 
     const firstCardNumber = 99_900_000_000
 
-    const availablePairs = 99_999_999
+    const cardCount = 10_000
 
-    const cardNumber = firstCardNumber + Date.now() % availablePairs
+    const cardNumber = firstCardNumber + Date.now() % cardCount
 
     return cardNumber.toString()
 

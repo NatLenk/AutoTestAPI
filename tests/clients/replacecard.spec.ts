@@ -11,7 +11,9 @@ test('replacecard - заменяем карту клиента', async ({ reques
     })
 
     const searchMode = 0
-    const searchValue = (Number(cardCode) + 1).toString()
+    const searchValue = cardCode === '99900009999'
+        ? '99900000000'
+        : (Number(cardCode) + 1).toString()
 
     const replaceCard = await clientsHelper.replaceCard(request, searchMode, searchValue, clientId)
     expect(replaceCard.response.status()).toBe(200)
