@@ -7,3 +7,5 @@ node_modules/
 /playwright/.auth/
 .env
 .env.local
+.env.*.local
+/.config-test-build/

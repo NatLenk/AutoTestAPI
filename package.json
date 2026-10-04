@@ -3,7 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test": "playwright test",
+    "typecheck": "tsc --noEmit",
+    "test:config": "tsc -p config/tsconfig.tests.json && node --test .config-test-build/loadEnvironment.test.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

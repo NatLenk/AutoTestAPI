@@ -2,6 +2,7 @@ import type { APIRequestContext } from '@playwright/test'
 import * as api from '../api.config'
 import type * as Types from '../types/RequestTypes'
 import { randomUUID } from 'node:crypto'
+import { environmentConfig } from '../environment.config'
 
 // Собираем тело запроса goods
 export function buildGoodsBody(isGroup?: boolean, deleteMark?: boolean, BC?: string[], fullName?: string, overrides: Partial<Types.Goods[number]> = {}): Types.Goods {
@@ -46,7 +47,7 @@ export async function goods(request: APIRequestContext, partial: boolean, isGrou
 export function buildGoodsListBody(inside: Types.Inside[]): Types.GoodsList {
 
     return [{
-        ID: 572,
+        ID: environmentConfig.goodsGroupId,
         inside
     }]
 

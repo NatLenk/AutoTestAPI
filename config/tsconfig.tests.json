@@ -1,0 +1,9 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "../.config-test-build",
+    "types": ["node"]
+  },
+  "include": ["loadEnvironment.test.ts"]
+}

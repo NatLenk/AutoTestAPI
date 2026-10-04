@@ -1,13 +1,7 @@
-import { existsSync } from 'node:fs'
-import { resolve } from 'node:path'
-import { loadEnvFile } from 'node:process'
 import { defineConfig, devices } from '@playwright/test'
+import { environmentConfig } from './environment.config'
 
-const localEnvironmentPath = resolve(__dirname, '.env.local')
-
-if (existsSync(localEnvironmentPath)) {
-  loadEnvFile(localEnvironmentPath)
-}
+console.log(`Окружение: ${environmentConfig.environment.toUpperCase()} | ветка: ${environmentConfig.branch} | файл: ${environmentConfig.fileName}`)
 /**
  * See https://playwright.dev/docs/test-configuration.
  */

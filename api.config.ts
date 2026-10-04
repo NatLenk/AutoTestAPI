@@ -1,8 +1,9 @@
 import type { APIResponse, APIRequestContext } from '@playwright/test';
+import { environmentConfig } from './environment.config'
 
 
-const baseUrl = process.env.BASE_URL!
-const token = process.env.API_TOKEN!
+const baseUrl = environmentConfig.baseUrl
+const token = environmentConfig.apiToken
 
 // Собираем URL и убираем лишние слеши в начале endpoint
 export function buildLoadUrl(endpoint: string): string {
