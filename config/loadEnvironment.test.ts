@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { execFileSync } from 'node:child_process'
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs'
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { basename, dirname, join, resolve } from 'node:path'
 import { test, type TestContext } from 'node:test'
@@ -143,8 +143,19 @@ test('URL должен быть HTTP или HTTPS, ID — положительн
 })
 
 test('без Git-репозитория запуск прекращается', t => {
-    const directory = createDirectory(t)
-    assert.throws(() => loadEnvironment(directory), /Не удалось определить Git-ветку/)
+    // Родительский репозиторий не должен влиять на проверку папки без .git.
+    const parentRepository = createRepository(t, 'master')
+    const directory = join(parentRepository, 'without-repository')
+    mkdirSync(directory)
+    const originalCeiling = process.env.GIT_CEILING_DIRECTORIES
+
+    try {
+        process.env.GIT_CEILING_DIRECTORIES = parentRepository
+        assert.throws(() => loadEnvironment(directory), /Не удалось определить Git-ветку/)
+    } finally {
+        if (originalCeiling === undefined) delete process.env.GIT_CEILING_DIRECTORIES
+        else process.env.GIT_CEILING_DIRECTORIES = originalCeiling
+    }
 })
 
 test('detached HEAD не выбирает DEV автоматически', t => {
