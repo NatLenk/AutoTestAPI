@@ -7,7 +7,7 @@ test('goodslist - добавляем товар в группу', async ({ reque
 
     const loadGoods = await nomenclatureHelper.goods(request, true)
     expect(loadGoods.response.status()).toBe(200)
-    await new Promise(resolve => setTimeout(resolve, 60_000))
+    await new Promise(resolve => setTimeout(resolve, 5_000))
 
 
     const code = loadGoods.body[0].code
