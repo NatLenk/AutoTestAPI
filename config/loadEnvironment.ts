@@ -1,6 +1,5 @@
-import { execFileSync } from 'node:child_process'
-import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
+import { readFileSync, statSync } from 'node:fs'
+import { dirname, resolve } from 'node:path'
 import { parseEnv } from 'node:util'
 
 export type EnvironmentConfig = Readonly<{
@@ -13,23 +12,45 @@ export type EnvironmentConfig = Readonly<{
     goodsGroupId: number
 }>
 
-export function loadEnvironment(projectDirectory: string): EnvironmentConfig {
-    let branch: string
+function readGitBranch(projectDirectory: string): string {
+    const dotGitPath = resolve(projectDirectory, '.git')
+    let gitDirectory = dotGitPath
 
     try {
-        branch = execFileSync('git', ['symbolic-ref', '--quiet', '--short', 'HEAD'], {
-            cwd: projectDirectory,
-            encoding: 'utf8',
-            stdio: ['ignore', 'pipe', 'pipe'],
-            windowsHide: true
-        }).trim()
+        const dotGitStat = statSync(dotGitPath)
+
+        if (dotGitStat.isFile()) {
+            const gitDirectoryReference = readFileSync(dotGitPath, 'utf8').trim()
+            const match = /^gitdir:\s*(.+)$/i.exec(gitDirectoryReference)
+
+            if (!match) throw new Error('Некорректная ссылка gitdir.')
+            gitDirectory = resolve(dirname(dotGitPath), match[1])
+        } else if (!dotGitStat.isDirectory()) {
+            throw new Error('Некорректные Git-метаданные.')
+        }
     } catch {
-        throw new Error('Не удалось определить Git-ветку. Запускайте тесты из Git-репозитория с выбранной веткой; detached HEAD не поддерживается.')
+        throw new Error(`Не найдены корректные Git-метаданные в ${dotGitPath}. Откройте корень клонированного репозитория.`)
     }
 
-    if (!branch) {
-        throw new Error('Git вернул пустое имя ветки. Окружение для тестов не выбрано.')
+    let head: string
+
+    try {
+        head = readFileSync(resolve(gitDirectory, 'HEAD'), 'utf8').trim()
+    } catch {
+        throw new Error(`Не удалось прочитать ${resolve(gitDirectory, 'HEAD')}. Проверьте Git-метаданные репозитория.`)
     }
+
+    const branchReference = /^ref:\s*refs\/heads\/(.+)$/.exec(head)
+
+    if (!branchReference) {
+        throw new Error('Не удалось определить выбранную Git-ветку: detached HEAD не поддерживается; возможно, файл HEAD повреждён.')
+    }
+
+    return branchReference[1]
+}
+
+export function loadEnvironment(projectDirectory: string): EnvironmentConfig {
+    const branch = readGitBranch(projectDirectory)
 
     const environment = branch === 'main' ? 'prod' : 'dev'
     const fileName = `.env.${environment}.local`

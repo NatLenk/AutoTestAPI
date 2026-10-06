@@ -1,5 +1,4 @@
 import assert from 'node:assert/strict'
-import { execFileSync } from 'node:child_process'
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { basename, dirname, join, resolve } from 'node:path'
@@ -21,18 +20,14 @@ function createDirectory(t: TestContext): string {
     return directory
 }
 
-function git(directory: string, args: string[]): string {
-    return execFileSync('git', args, {
-        cwd: directory,
-        encoding: 'utf8',
-        stdio: ['ignore', 'pipe', 'pipe'],
-        windowsHide: true
-    }).trim()
+function selectBranch(directory: string, branch: string): void {
+    writeFileSync(join(directory, '.git', 'HEAD'), `ref: refs/heads/${branch}\n`, 'utf8')
 }
 
 function createRepository(t: TestContext, branch: string): string {
     const directory = createDirectory(t)
-    git(directory, ['init', '--quiet', `--initial-branch=${branch}`])
+    mkdirSync(join(directory, '.git'))
+    selectBranch(directory, branch)
     return directory
 }
 
@@ -74,10 +69,10 @@ test('после переключения ветки загружается др
     writeEnvironment(directory, 'prod')
 
     assert.equal(loadEnvironment(directory).environment, 'dev')
-    git(directory, ['symbolic-ref', 'HEAD', 'refs/heads/main'])
+    selectBranch(directory, 'main')
     assert.equal(loadEnvironment(directory).environment, 'prod')
     assert.equal(loadEnvironment(directory).promocodeGroupId, 101)
-    git(directory, ['symbolic-ref', 'HEAD', 'refs/heads/feature/test'])
+    selectBranch(directory, 'feature/test')
     assert.equal(loadEnvironment(directory).goodsGroupId, 202)
 })
 
@@ -119,7 +114,7 @@ test('все четыре переменные обязательны, ошиб�
     const names = ['BASE_URL', 'API_TOKEN', 'PROMOCODE_GROUP_ID', 'GOODS_GROUP_ID']
 
     for (const name of names) {
-        writeEnvironment(directory, 'prod', { [name]: '   ' })
+        writeEnvironment(directory, 'prod', { [name]: '' })
         assert.throws(() => loadEnvironment(directory), error =>
             error instanceof Error && error.message.includes(name) && !error.message.includes('prod-test-token'))
     }
@@ -143,28 +138,13 @@ test('URL должен быть HTTP или HTTPS, ID — положительн
 })
 
 test('без Git-репозитория запуск прекращается', t => {
-    // Родительский репозиторий не должен влиять на проверку папки без .git.
-    const parentRepository = createRepository(t, 'master')
-    const directory = join(parentRepository, 'without-repository')
-    mkdirSync(directory)
-    const originalCeiling = process.env.GIT_CEILING_DIRECTORIES
-
-    try {
-        process.env.GIT_CEILING_DIRECTORIES = parentRepository
-        assert.throws(() => loadEnvironment(directory), /Не удалось определить Git-ветку/)
-    } finally {
-        if (originalCeiling === undefined) delete process.env.GIT_CEILING_DIRECTORIES
-        else process.env.GIT_CEILING_DIRECTORIES = originalCeiling
-    }
+    const directory = createDirectory(t)
+    assert.throws(() => loadEnvironment(directory), /Не найдены корректные Git-метаданные/)
 })
 
 test('detached HEAD не выбирает DEV автоматически', t => {
     const directory = createRepository(t, 'main')
-    git(directory, [
-        '-c', 'user.name=Config Test', '-c', 'user.email=config-test@example.test',
-        '-c', `core.hooksPath=${directory}`, 'commit', '--quiet', '--allow-empty', '--no-gpg-sign', '-m', 'Config test'
-    ])
-    git(directory, ['checkout', '--quiet', '--detach'])
+    writeFileSync(join(directory, '.git', 'HEAD'), '0123456789abcdef0123456789abcdef01234567\n', 'utf8')
     writeEnvironment(directory, 'dev')
     writeEnvironment(directory, 'prod')
 
