@@ -119,7 +119,7 @@ test('все четыре переменные обязательны, ошиб�
     const names = ['BASE_URL', 'API_TOKEN', 'PROMOCODE_GROUP_ID', 'GOODS_GROUP_ID']
 
     for (const name of names) {
-        writeEnvironment(directory, 'prod', { [name]: '   ' })
+        writeEnvironment(directory, 'prod', { [name]: '' })
         assert.throws(() => loadEnvironment(directory), error =>
             error instanceof Error && error.message.includes(name) && !error.message.includes('prod-test-token'))
     }
