@@ -1,3 +1,6 @@
 import { loadEnvironment } from './config/loadEnvironment'
 
-export const environmentConfig = loadEnvironment(__dirname)
+// Перед запуском тестов укажите DEV или PROD.
+export const TEST_ENVIRONMENT: 'DEV' | 'PROD' = 'DEV'
+
+export const environmentConfig = loadEnvironment(__dirname, TEST_ENVIRONMENT)

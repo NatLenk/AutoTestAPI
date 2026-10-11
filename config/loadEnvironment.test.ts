@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { basename, dirname, join, resolve } from 'node:path'
 import { test, type TestContext } from 'node:test'
@@ -20,17 +20,6 @@ function createDirectory(t: TestContext): string {
     return directory
 }
 
-function selectBranch(directory: string, branch: string): void {
-    writeFileSync(join(directory, '.git', 'HEAD'), `ref: refs/heads/${branch}\n`, 'utf8')
-}
-
-function createRepository(t: TestContext, branch: string): string {
-    const directory = createDirectory(t)
-    mkdirSync(join(directory, '.git'))
-    selectBranch(directory, branch)
-    return directory
-}
-
 function writeEnvironment(directory: string, environment: 'dev' | 'prod', overrides: Record<string, string> = {}): void {
     const values = {
         BASE_URL: `https://${environment}.example.test/api/`,
@@ -44,15 +33,13 @@ function writeEnvironment(directory: string, environment: 'dev' | 'prod', overri
         Object.entries(values).map(([name, value]) => `${name}=${value}`).join('\n'), 'utf8')
 }
 
-test('main выбирает только PROD, остальные ветки выбирают DEV', t => {
-    for (const branch of ['main', 'feature/test', 'rework/rework-code', 'main-fix']) {
-        const directory = createRepository(t, branch)
+test('явный выбор DEV и PROD работает без Git-репозитория', t => {
+    for (const environment of ['dev', 'prod'] as const) {
+        const directory = createDirectory(t)
         writeEnvironment(directory, 'dev')
         writeEnvironment(directory, 'prod')
 
-        const environment = branch === 'main' ? 'prod' : 'dev'
-        assert.deepEqual(loadEnvironment(directory), {
-            branch,
+        assert.deepEqual(loadEnvironment(directory, environment), {
             environment,
             fileName: `.env.${environment}.local`,
             baseUrl: `https://${environment}.example.test/api/`,
@@ -63,40 +50,38 @@ test('main выбирает только PROD, остальные ветки в�
     }
 })
 
-test('после переключения ветки загружается другой набор настроек', t => {
-    const directory = createRepository(t, 'feature/test')
+test('выбор другого окружения загружает другой набор настроек', t => {
+    const directory = createDirectory(t)
     writeEnvironment(directory, 'dev')
     writeEnvironment(directory, 'prod')
 
-    assert.equal(loadEnvironment(directory).environment, 'dev')
-    selectBranch(directory, 'main')
-    assert.equal(loadEnvironment(directory).environment, 'prod')
-    assert.equal(loadEnvironment(directory).promocodeGroupId, 101)
-    selectBranch(directory, 'feature/test')
-    assert.equal(loadEnvironment(directory).goodsGroupId, 202)
+    assert.equal(loadEnvironment(directory, 'DEV').environment, 'dev')
+    assert.equal(loadEnvironment(directory, ' prod ').environment, 'prod')
+    assert.equal(loadEnvironment(directory, 'prod').promocodeGroupId, 101)
+    assert.equal(loadEnvironment(directory, 'dev').goodsGroupId, 202)
 })
 
 test('отсутствующий файл не заменяется другим окружением или старым .env.local', t => {
-    for (const branch of ['main', 'feature/test']) {
-        const directory = createRepository(t, branch)
-        writeEnvironment(directory, branch === 'main' ? 'dev' : 'prod')
+    for (const environment of ['dev', 'prod'] as const) {
+        const directory = createDirectory(t)
+        writeEnvironment(directory, environment === 'prod' ? 'dev' : 'prod')
         writeFileSync(join(directory, '.env.local'), 'BASE_URL=https://legacy.example.test/\nAPI_TOKEN=legacy-token')
 
-        const expectedFile = branch === 'main' ? '.env.prod.local' : '.env.dev.local'
-        assert.throws(() => loadEnvironment(directory), error =>
+        const expectedFile = `.env.${environment}.local`
+        assert.throws(() => loadEnvironment(directory, environment), error =>
             error instanceof Error && error.message.includes(`Не удалось прочитать ${expectedFile}`))
     }
 })
 
 test('переменные процесса не подменяют значения выбранного файла', t => {
-    const directory = createRepository(t, 'feature/test')
+    const directory = createDirectory(t)
     writeEnvironment(directory, 'dev')
     const names = ['BASE_URL', 'API_TOKEN', 'PROMOCODE_GROUP_ID', 'GOODS_GROUP_ID']
     const originalValues = names.map(name => process.env[name])
 
     try {
         for (const name of names) process.env[name] = 'foreign-environment-value'
-        const config = loadEnvironment(directory)
+        const config = loadEnvironment(directory, 'dev')
         assert.equal(config.baseUrl, 'https://dev.example.test/api/')
         assert.equal(config.apiToken, 'dev-test-token')
         assert.equal(config.promocodeGroupId, 201)
@@ -110,43 +95,39 @@ test('переменные процесса не подменяют значен
 })
 
 test('все четыре переменные обязательны, ошибка не раскрывает токен', t => {
-    const directory = createRepository(t, 'main')
+    const directory = createDirectory(t)
     const names = ['BASE_URL', 'API_TOKEN', 'PROMOCODE_GROUP_ID', 'GOODS_GROUP_ID']
 
     for (const name of names) {
         writeEnvironment(directory, 'prod', { [name]: '' })
-        assert.throws(() => loadEnvironment(directory), error =>
+        assert.throws(() => loadEnvironment(directory, 'prod'), error =>
             error instanceof Error && error.message.includes(name) && !error.message.includes('prod-test-token'))
     }
 })
 
 test('URL должен быть HTTP или HTTPS, ID — положительными безопасными целыми числами', t => {
-    const directory = createRepository(t, 'main')
+    const directory = createDirectory(t)
 
     for (const url of ['not-a-url', 'ftp://example.test/', '/api/']) {
         writeEnvironment(directory, 'prod', { BASE_URL: url })
-        assert.throws(() => loadEnvironment(directory), /BASE_URL/)
+        assert.throws(() => loadEnvironment(directory, 'prod'), /BASE_URL/)
     }
 
     for (const name of ['PROMOCODE_GROUP_ID', 'GOODS_GROUP_ID']) {
         for (const value of ['0', '-1', '1.5', 'NaN', '9007199254740992', '1e3']) {
             writeEnvironment(directory, 'prod', { [name]: value })
-            assert.throws(() => loadEnvironment(directory), error =>
+            assert.throws(() => loadEnvironment(directory, 'prod'), error =>
                 error instanceof Error && error.message.includes(name))
         }
     }
 })
 
-test('без Git-репозитория запуск прекращается', t => {
+test('пустой или неизвестный выбор не подставляет окружение автоматически', t => {
     const directory = createDirectory(t)
-    assert.throws(() => loadEnvironment(directory), /Не найдены корректные Git-метаданные/)
-})
-
-test('detached HEAD не выбирает DEV автоматически', t => {
-    const directory = createRepository(t, 'main')
-    writeFileSync(join(directory, '.git', 'HEAD'), '0123456789abcdef0123456789abcdef01234567\n', 'utf8')
     writeEnvironment(directory, 'dev')
     writeEnvironment(directory, 'prod')
 
-    assert.throws(() => loadEnvironment(directory), /detached HEAD не поддерживается/)
+    for (const choice of [undefined, '', '   ', 'staging', '../prod', '1']) {
+        assert.throws(() => loadEnvironment(directory, choice), /В environment\.config\.ts укажите TEST_ENVIRONMENT/)
+    }
 })

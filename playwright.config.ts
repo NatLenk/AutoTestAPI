@@ -1,7 +1,7 @@
 import { defineConfig, devices } from '@playwright/test'
 import { environmentConfig } from './environment.config'
 
-console.log(`Окружение: ${environmentConfig.environment.toUpperCase()} | ветка: ${environmentConfig.branch} | файл: ${environmentConfig.fileName}`)
+console.log(`Окружение: ${environmentConfig.environment.toUpperCase()} | файл: ${environmentConfig.fileName}`)
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
