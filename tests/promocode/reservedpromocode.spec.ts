@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import * as promocodeHelper from "../../helpers/promocodeHelper"
+import { reservedPromocodeResponseSchema } from '../../schemas/promocodeSchema'
 
 test('reservedpromocode - резервируем промокод', async ({ request }) => {
 
@@ -9,5 +10,6 @@ test('reservedpromocode - резервируем промокод', async ({ req
 
     const reservedpromocode = await promocodeHelper.reservedPromocode(request, promoCode, true)
     expect(reservedpromocode.response.status()).toBe(200)
+    reservedPromocodeResponseSchema.parse(reservedpromocode.responseBody)
 
 })

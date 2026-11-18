@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test'
 import * as api from '../../api.config'
 import * as planfactHelper from '../../helpers/planfactHelper'
+import { getSalesIndicesSlidesSchema } from '../../schemas/planfactSchema'
 
 test('getsalesindicesslides - получаем слайды с сегодняшней датой', async ({ request }) => {
 
@@ -8,6 +9,7 @@ test('getsalesindicesslides - получаем слайды с сегодняш�
 
     const getSalesIndicesSlides = await planfactHelper.getSalesIndicesSlides(request, date)
     expect(getSalesIndicesSlides.response.status()).toBe(200)
+    getSalesIndicesSlidesSchema.parse(getSalesIndicesSlides.responseBody)
 
 })
 
@@ -15,5 +17,6 @@ test('getsalesindicesslides - получаем слайды без даты в �
 
     const getSalesIndicesSlides = await planfactHelper.getSalesIndicesSlides(request)
     expect(getSalesIndicesSlides.response.status()).toBe(200)
+    getSalesIndicesSlidesSchema.parse(getSalesIndicesSlides.responseBody)
 
 })

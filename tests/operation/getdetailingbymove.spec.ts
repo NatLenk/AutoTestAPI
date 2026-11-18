@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test'
 import * as clientsHelper from '../../helpers/clientsHelper'
 import * as operationHelper from '../../helpers/operationHelper'
+import { getDetailingByMoveResponseSchema } from '../../schemas/operationSchema'
 
 test('getdetailingbymove - получаем подробности операции', async ({ request }) => {
 
@@ -15,5 +16,6 @@ test('getdetailingbymove - получаем подробности операц�
         move_id: processSale.body.move_id, move_date: confirmSale.body.doc_dt
     })
     expect(getDetailingByMove.response.status()).toBe(200)
+    getDetailingByMoveResponseSchema.parse(getDetailingByMove.responseBody)
 
 })

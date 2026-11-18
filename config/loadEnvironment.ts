@@ -1,9 +1,8 @@
-import { readFileSync, statSync } from 'node:fs'
-import { dirname, resolve } from 'node:path'
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { parseEnv } from 'node:util'
 
 export type EnvironmentConfig = Readonly<{
-    branch: string
     environment: 'dev' | 'prod'
     fileName: string
     baseUrl: string
@@ -12,47 +11,12 @@ export type EnvironmentConfig = Readonly<{
     goodsGroupId: number
 }>
 
-function readGitBranch(projectDirectory: string): string {
-    const dotGitPath = resolve(projectDirectory, '.git')
-    let gitDirectory = dotGitPath
+export function loadEnvironment(projectDirectory: string, selectedEnvironment?: string): EnvironmentConfig {
+    const environment = selectedEnvironment?.trim().toLowerCase()
 
-    try {
-        const dotGitStat = statSync(dotGitPath)
-
-        if (dotGitStat.isFile()) {
-            const gitDirectoryReference = readFileSync(dotGitPath, 'utf8').trim()
-            const match = /^gitdir:\s*(.+)$/i.exec(gitDirectoryReference)
-
-            if (!match) throw new Error('Некорректная ссылка gitdir.')
-            gitDirectory = resolve(dirname(dotGitPath), match[1])
-        } else if (!dotGitStat.isDirectory()) {
-            throw new Error('Некорректные Git-метаданные.')
-        }
-    } catch {
-        throw new Error(`Не найдены корректные Git-метаданные в ${dotGitPath}. Откройте корень клонированного репозитория.`)
+    if (environment !== 'dev' && environment !== 'prod') {
+        throw new Error('В environment.config.ts укажите TEST_ENVIRONMENT = \'DEV\' или \'PROD\'.')
     }
-
-    let head: string
-
-    try {
-        head = readFileSync(resolve(gitDirectory, 'HEAD'), 'utf8').trim()
-    } catch {
-        throw new Error(`Не удалось прочитать ${resolve(gitDirectory, 'HEAD')}. Проверьте Git-метаданные репозитория.`)
-    }
-
-    const branchReference = /^ref:\s*refs\/heads\/(.+)$/.exec(head)
-
-    if (!branchReference) {
-        throw new Error('Не удалось определить выбранную Git-ветку: detached HEAD не поддерживается; возможно, файл HEAD повреждён.')
-    }
-
-    return branchReference[1]
-}
-
-export function loadEnvironment(projectDirectory: string): EnvironmentConfig {
-    const branch = readGitBranch(projectDirectory)
-
-    const environment = branch === 'main' ? 'prod' : 'dev'
     const fileName = `.env.${environment}.local`
     let values: ReturnType<typeof parseEnv>
 
@@ -60,7 +24,7 @@ export function loadEnvironment(projectDirectory: string): EnvironmentConfig {
         // Читаем выбранный файл напрямую: переменные процесса не могут подменить окружение.
         values = parseEnv(readFileSync(resolve(projectDirectory, fileName), 'utf8'))
     } catch {
-        throw new Error(`Не удалось прочитать ${fileName} для ветки ${branch}. Создайте его в корне проекта и заполните настройки ${environment.toUpperCase()}: BASE_URL, API_TOKEN, PROMOCODE_GROUP_ID, GOODS_GROUP_ID.`)
+        throw new Error(`Не удалось прочитать ${fileName}. Создайте его в корне проекта и заполните настройки ${environment.toUpperCase()}: BASE_URL, API_TOKEN, PROMOCODE_GROUP_ID, GOODS_GROUP_ID.`)
     }
 
     const requiredNames = ['BASE_URL', 'API_TOKEN', 'PROMOCODE_GROUP_ID', 'GOODS_GROUP_ID']
@@ -96,7 +60,6 @@ export function loadEnvironment(projectDirectory: string): EnvironmentConfig {
     }
 
     return Object.freeze({
-        branch,
         environment,
         fileName,
         baseUrl,

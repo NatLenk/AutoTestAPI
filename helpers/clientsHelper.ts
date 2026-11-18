@@ -1,7 +1,7 @@
 import { expect, APIRequestContext } from '@playwright/test'
 import { randomInt } from 'node:crypto'
 import * as api from '../api.config'
-import type * as Types from '../types/RequestTypes'
+import * as Types from '../types/RequestTypes'
 
 // Собираем тело запроса addclient
 export function buildAddClientBody(phone: string, clientId: number | null, overrides: Partial<Types.AddClientRequestBody> = {}): Types.AddClientRequestBody {
@@ -19,7 +19,7 @@ export async function addClient(request: APIRequestContext, phone: string, clien
 
     const body = buildAddClientBody(phone, clientId, overrides)
 
-    return api.sendApiRequest(request, {
+    return api.sendApiRequest<Types.AddClientRequestBody, Types.AddClientResponseBody>(request, {
         endpoint: 'addclient',
         method: 'POST',
         payload: body
@@ -160,7 +160,7 @@ export async function searchClient(request: APIRequestContext, searchMode: 0 | 1
 }
 
 // Складываем баланс из всех записей клиента
-export function calculateTotalBalance(items: Types.BalanceItem[]): number {
+export function calculateTotalBalance(items: Types.GetClientFullBalanceResponseBody[]): number {
 
     return items.reduce((total, item) => {
         return total + Number(item.balance)
@@ -184,7 +184,7 @@ export async function getClientFullBalance(request: APIRequestContext, clientId:
 
     return api.sendApiRequest<
         Types.GetClientFullBalanceRequestBody,
-        Types.BalanceItem[]
+        Types.GetClientFullBalanceResponseBody[]
     >(request, {
         endpoint: 'getclientfullbalance',
         method: 'POST',
@@ -207,7 +207,7 @@ export async function getClientCards(request: APIRequestContext, clientId: numbe
 
     const body = buildGetClientCardsBody(clientId)
 
-    return api.sendApiRequest(request, {
+    return api.sendApiRequest<Types.GetClientCards, Types.GetClientCardsResponseBody>(request, {
         endpoint: 'getclientcards',
         method: 'POST',
         payload: body
@@ -305,7 +305,7 @@ export async function getConfirmationCode(request: APIRequestContext, clientId: 
 
     const body = buildGetConfirmationCodeBody(clientId, outerSystemsInterfaceType)
 
-    return api.sendApiRequest(request, {
+    return api.sendApiRequest<Types.GetConfirmationCode, Types.GetConfirmationCodeResponseBody>(request, {
         endpoint: 'getconfirmationcode',
         method: 'POST',
         payload: body

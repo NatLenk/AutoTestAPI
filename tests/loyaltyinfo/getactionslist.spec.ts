@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 import * as loyaltyinfoHelper from "../../helpers/loyaltyinfoHelper"
 import * as nomenclatureHelper from "../../helpers/nomenclatureHelper";
+import { getActionsListSchema } from "../../schemas/loyaltyinfoSchema";
 
 test('getactionslist - получаем акции для товара', async ({ request }) => {
 
@@ -12,5 +13,6 @@ test('getactionslist - получаем акции для товара', async (
 
     const getActionsList = await loyaltyinfoHelper.getActionsList(request, null, [code])
     expect(getActionsList.response.status()).toBe(200)
+    getActionsListSchema.parse(getActionsList.responseBody)
 
 })

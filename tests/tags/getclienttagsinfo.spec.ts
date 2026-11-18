@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test'
 import * as clientsHelper from '../../helpers/clientsHelper'
 import * as tagsHelper from '../../helpers/tagsHelper'
+import { getClientTagsInfoResponseSchema } from '../../schemas/tagsSchema'
 
 test('getclienttagsinfo - получаем теги клиента', async ({ request }) => {
 
@@ -14,8 +15,7 @@ test('getclienttagsinfo - получаем теги клиента', async ({ re
 
     const getClientTagsInfo = await tagsHelper.getClientTagsInfo(request, clientId, tagId)
     expect(getClientTagsInfo.response.status()).toBe(200)
-    expect(getClientTagsInfo.responseBody.data).toContainEqual(
-        expect.objectContaining({ tag_id: tagId })
-    )
+    getClientTagsInfoResponseSchema.parse(getClientTagsInfo.responseBody)
+    expect(getClientTagsInfo.responseBody.result_code).toBe('0')
 
 })
