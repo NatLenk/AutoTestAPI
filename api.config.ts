@@ -16,7 +16,7 @@ export function buildLoadUrl(endpoint: string): string {
 
     url.searchParams.set('h', token);
 
-    return url.toString();
+    return `${url.toString()}`;
 }
 
 // Выводим запрос в консоль, токен скрываем
