@@ -1,5 +1,5 @@
 import { defineConfig, devices } from '@playwright/test'
-import { environmentConfig } from './environment.config'
+import { environmentConfig } from './api.config'
 
 console.log(`Окружение: ${environmentConfig.environment.toUpperCase()} | файл: ${environmentConfig.fileName}`)
 /**

@@ -128,6 +128,6 @@ test('пустой или неизвестный выбор не подстав�
     writeEnvironment(directory, 'prod')
 
     for (const choice of [undefined, '', '   ', 'staging', '../prod', '1']) {
-        assert.throws(() => loadEnvironment(directory, choice), /В environment\.config\.ts укажите TEST_ENVIRONMENT/)
+        assert.throws(() => loadEnvironment(directory, choice), /В api\.config\.ts укажите TEST_ENVIRONMENT/)
     }
 })
