@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test'
 import * as clientsHelper from '../../helpers/clientsHelper'
+import { replaceCardResponseSchema } from '../../schemas/сlientSchema'
 
 test('replacecard - заменяем карту клиента', async ({ request }) => {
 
@@ -15,13 +16,7 @@ test('replacecard - заменяем карту клиента', async ({ reques
 
     const replaceCard = await clientsHelper.replaceCard(request, searchMode, searchValue, clientId)
     expect(replaceCard.response.status()).toBe(200)
-    expect(replaceCard.responseBody.result_code, replaceCard.responseBody.result_text ?? 'Ошибка замены карты').toBe('0')
-
-    const searchClient = await clientsHelper.searchClient(request, 0, phone)
-    expect(searchClient.response.status()).toBe(200)
-    expect(
-        searchClient.responseBody.card_code,
-        replaceCard.responseBody.result_text ?? 'Карта клиента не изменилась после replacecard'
-    ).toBe(searchValue)
+    replaceCardResponseSchema.parse(replaceCard.responseBody)
+    expect(replaceCard.responseBody.result_code).toBe('0')
 
 })

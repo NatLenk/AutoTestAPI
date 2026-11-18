@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test'
 import * as clientsHelper from '../../helpers/clientsHelper'
 import * as operationHelper from '../../helpers/operationHelper'
+import { manualAddResponseScheme } from '../../schemas/operationSchema'
 
 test('manualadd - ручная операция', async ({ request }) => {
 
@@ -10,5 +11,6 @@ test('manualadd - ручная операция', async ({ request }) => {
         description: "Добавляем бонусы в тесте"
     })
     expect(manualAdd.response.status()).toBe(200)
+    manualAddResponseScheme.parse(manualAdd.responseBody)
 
 })

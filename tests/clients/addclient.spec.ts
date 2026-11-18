@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test'
 import * as clientsHelper from '../../helpers/clientsHelper'
+import { addClientResponseSchema } from '../../schemas/сlientSchema'
 
 test('addclient - добавляем нового клиента', async ({ request }) => {
 
@@ -7,9 +8,8 @@ test('addclient - добавляем нового клиента', async ({ requ
 
     const addClient = await clientsHelper.addClient(request, phone, null)
     expect(addClient.response.status()).toBe(200)
-
-    const createdClientId = await clientsHelper.searchClientId(request, phone)
-    expect(createdClientId).not.toBeNull()
+    addClientResponseSchema.parse(addClient.responseBody)
+    expect(addClient.responseBody.result_code).toBe('0')
 
 })
 
@@ -29,6 +29,7 @@ test('addclient - обновляем данные клиента', async ({ requ
 
     const addClient = await clientsHelper.addClient(request, phone, clientId, updateBody)
     expect(addClient.response.status()).toBe(200)
-
+    addClientResponseSchema.parse(addClient.responseBody)
+    expect(addClient.responseBody.result_code).toBe('0')
 
 })

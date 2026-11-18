@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 import * as promocodeHelper from "../../helpers/promocodeHelper"
 import * as clientsHelper from '../../helpers/clientsHelper'
+import { getClientPromocodesResponseSchema } from '../../schemas/promocodeSchema'
 
 test('getclientpromocodes - получаем промокоды клиента', async ({ request }) => {
 
@@ -11,5 +12,6 @@ test('getclientpromocodes - получаем промокоды клиента',
 
     const getClientPromocodes = await promocodeHelper.getClientPromocodes(request, clientId)
     expect(getClientPromocodes.response.status()).toBe(200)
+    getClientPromocodesResponseSchema.parse(getClientPromocodes.responseBody)
 
 })

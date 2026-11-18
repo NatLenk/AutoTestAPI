@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test'
 import * as clientsHelper from '../../helpers/clientsHelper'
 import * as otherHelper from '../../helpers/otherHelper'
+import { generateCardSchema } from '../../schemas/otherSchema'
 
 test('generatecard - запрашиваем создание карты CardsMobile', async ({ request }) => {
 
@@ -8,5 +9,6 @@ test('generatecard - запрашиваем создание карты CardsMob
 
     const generateCard = await otherHelper.generateCard(request, clientId)
     expect(generateCard.response.status()).toBe(200)
+    generateCardSchema.parse(generateCard.responseBody)
 
 })

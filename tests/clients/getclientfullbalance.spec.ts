@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test'
 import * as clientsHelper from '../../helpers/clientsHelper'
 import * as operationHelper from '../../helpers/operationHelper'
+import { getClientFullBalanceResponseSchema } from '../../schemas/сlientSchema'
 
 test('getclientfullbalance - проверяем баланс нового клиента', async ({ request }) => {
 
@@ -8,7 +9,7 @@ test('getclientfullbalance - проверяем баланс нового кли
 
     const getClientFullBalance = await clientsHelper.getClientFullBalance(request, clientId)
     expect(getClientFullBalance.response.status()).toBe(200)
-    expect(Array.isArray(getClientFullBalance.responseBody)).toBe(true)
+    getClientFullBalanceResponseSchema.parse(getClientFullBalance.responseBody)
 
     const totalBalance = clientsHelper.calculateTotalBalance(getClientFullBalance.responseBody)
     expect(Number.isFinite(totalBalance)).toBe(true)
@@ -23,7 +24,7 @@ test('getclientfullbalance - проверяем баланс после доба
 
     const balanceBefore = await clientsHelper.getClientFullBalance(request, clientId)
     expect(balanceBefore.response.status()).toBe(200)
-    expect(Array.isArray(balanceBefore.responseBody)).toBe(true)
+    getClientFullBalanceResponseSchema.parse(balanceBefore.responseBody)
 
     const totalBalanceBefore = clientsHelper.calculateTotalBalance(balanceBefore.responseBody)
     expect(Number.isFinite(totalBalanceBefore)).toBe(true)
@@ -35,7 +36,7 @@ test('getclientfullbalance - проверяем баланс после доба
 
     const balanceAfter = await clientsHelper.getClientFullBalance(request, clientId)
     expect(balanceAfter.response.status()).toBe(200)
-    expect(Array.isArray(balanceAfter.responseBody)).toBe(true)
+    getClientFullBalanceResponseSchema.parse(balanceAfter.responseBody)
 
     const totalBalanceAfter = clientsHelper.calculateTotalBalance(balanceAfter.responseBody)
     expect(Number.isFinite(totalBalanceAfter)).toBe(true)

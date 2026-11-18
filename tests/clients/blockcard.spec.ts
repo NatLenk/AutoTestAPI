@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test'
 import * as clientsHelper from '../../helpers/clientsHelper'
+import { blockCardResponseSchema } from '../../schemas/сlientSchema'
 
 test('blockcard - блокируем карту клиента', async ({ request }) => {
 
@@ -23,5 +24,7 @@ test('blockcard - блокируем карту клиента', async ({ reques
 
     const blockCard = await clientsHelper.blockCard(request, cardId)
     expect(blockCard.response.status()).toBe(200)
+    blockCardResponseSchema.parse(blockCard.responseBody)
+    expect(blockCard.responseBody.result_code).toBe('0')
 
 })

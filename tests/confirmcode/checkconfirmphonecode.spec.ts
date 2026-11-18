@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test'
 import * as confirmcodeHelper from '../../helpers/confirmCodeHelper'
 import * as clientsHelper from '../../helpers/clientsHelper'
+import { checkConfirmPhoneCodeResponseSchema } from '../../schemas/confirmCodeSchema'
 
 test('checkconfirmphonecode - отправляем запрос без кода подтверждения', async ({ request }) => {
 
@@ -10,5 +11,6 @@ test('checkconfirmphonecode - отправляем запрос без кода 
 
     const checkConfirmPhoneCode = await confirmcodeHelper.checkConfirmPhoneCode(request, clientId, phone)
     expect(checkConfirmPhoneCode.response.status()).toBe(200)
+    checkConfirmPhoneCodeResponseSchema.parse(checkConfirmPhoneCode.responseBody)
 
 })

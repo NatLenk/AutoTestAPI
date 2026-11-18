@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test"
 import * as nomenclatureHelper from '../../helpers/nomenclatureHelper'
+import { goodsListSchema } from "../../schemas/nomenclatureSchema"
 
 test('goodslist - добавляем товар в группу', async ({ request }) => {
 
@@ -13,5 +14,6 @@ test('goodslist - добавляем товар в группу', async ({ reque
     const code = loadGoods.body[0].code
     const goodsList = await nomenclatureHelper.goodsList(request, [{ code }])
     expect(goodsList.response.status()).toBe(200)
+    goodsListSchema.parse(loadGoods.responseBody)
 
 })

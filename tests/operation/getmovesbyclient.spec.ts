@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test'
 import * as clientsHelper from '../../helpers/clientsHelper'
 import * as operationHelper from '../../helpers/operationHelper'
+import { getMovesByClientResponseScheme } from '../../schemas/operationSchema'
 
 test('getmovesbyclient - получаем операции клиента', async ({ request }) => {
 
@@ -13,7 +14,7 @@ test('getmovesbyclient - получаем операции клиента', asyn
 
     const getmovesbyclient = await operationHelper.getmovesbyclient(request, clientId)
     expect(getmovesbyclient.response.status()).toBe(200)
-    expect(Array.isArray(getmovesbyclient.responseBody.client_moves)).toBe(true)
     expect(getmovesbyclient.responseBody.client_moves.length).toBeGreaterThan(0)
+    getMovesByClientResponseScheme.parse(getmovesbyclient.responseBody)
 
 })

@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test'
 import * as clientsHelper from '../../helpers/clientsHelper'
 import * as tagsHelper from '../../helpers/tagsHelper'
+import { deleteClientTagsResponseSchema } from '../../schemas/tagsSchema'
 
 test('deleteclienttags - удаляем тег у клиента', async ({ request }) => {
 
@@ -14,5 +15,8 @@ test('deleteclienttags - удаляем тег у клиента', async ({ requ
 
     const deleteClientTags = await tagsHelper.deleteClientTags(request, clientId, [tagId])
     expect(deleteClientTags.response.status()).toBe(200)
+    deleteClientTagsResponseSchema.parse(deleteClientTags.responseBody)
+    expect(deleteClientTags.responseBody.result_code).toBe('0')
+
 
 })

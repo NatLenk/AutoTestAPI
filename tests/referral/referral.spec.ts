@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test'
 import * as clientsHelper from '../../helpers/clientsHelper'
 import * as referralHelper from '../../helpers/referralHelper'
+import { referralSchema } from '../../schemas/referralSchema'
 
 test('referral - получаем рефералов', async ({ request }) => {
 
@@ -12,5 +13,6 @@ test('referral - получаем рефералов', async ({ request }) => {
 
     const referral = await referralHelper.referral(request, referrerClientId)
     expect(referral.response.status()).toBe(200)
+    referralSchema.parse(referral.responseBody)
 
 })

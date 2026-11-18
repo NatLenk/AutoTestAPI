@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test'
 import * as clientsHelper from '../../helpers/clientsHelper'
 import * as tagsHelper from '../../helpers/tagsHelper'
+import { updateClientTagResponseSchema } from '../../schemas/tagsSchema'
 
 test('updateclienttag - увеличиваем значение тега-счётчика', async ({ request }) => {
 
@@ -24,5 +25,7 @@ test('updateclienttag - увеличиваем значение тега-счё�
 
     const updateClientTag = await tagsHelper.updateClientTag(request, clientId, { id: tagId, value: 2, action: 'up' })
     expect(updateClientTag.response.status()).toBe(200)
+    updateClientTagResponseSchema.parse(updateClientTag.responseBody)
+    expect(updateClientTag.responseBody.result_code).toBe('0')
 
 })

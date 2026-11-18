@@ -39,6 +39,38 @@ export type SearchClientRequestBody = {
     pos_discounts_are_used?: 0 | 1
 
 }
+// Поля ответа searchclient
+type Interfaces = {
+    interface_id: string | null
+    interface_os: string | null
+    interface_name: string
+    interface_type: number
+}
+
+type SearchClientResponseCards = {
+    code: string
+    barcode: string
+    card_id: number
+    outer_systems_interface_name: string
+    outer_systems_interface_type: number | null
+}
+
+type BillDataItems = {
+    code: string
+    flags: number
+    price: number
+    new_price_action_id: number | null
+    new_price_respond_id: number | null
+    new_price_limit_action_id: number | null
+    new_price_limit_respond_id: number | null
+    new_price_limits_counter_quantity: number | null
+}
+
+type SpecialDaysTypes = {
+    id: number,
+    aname: string,
+    value: string | null
+}
 
 export type SearchClientResponseBody = {
     state: null | '0' | '1' | '2' | '3' | '4'
@@ -46,7 +78,57 @@ export type SearchClientResponseBody = {
     card_id: string | null
     card_state: '0' | '2' | '3' | null
     card_code: string | null
-    card_barcode: string | null
+    card_barcode: string | null,
+    result_code: string,
+    result_text: string,
+    bonus_percent: string,
+    discount_percent: string,
+    bonus_balance: number,
+    bonus_out_percent: string,
+    program_name: string,
+    program_type: string,
+    max_bill_bonus_out: string,
+    max_bonus_out: string,
+    only_with_cards: string,
+    use_sms_code: string,
+    use_discount_sms: string,
+    sms_code_sum: number,
+    phone: string | null,
+    birth_date: string | null,
+    first_name: string | null,
+    middle_name: string | null,
+    last_name: string | null,
+    full_name: string,
+    sex: string | null,
+    client_email: string,
+    discounted_total: string,
+    discount: string,
+    activate_client_type: string,
+    replace_card_type: string,
+    referral_system_is_used: string,
+    purchases_sum: string,
+    status_name: string | null,
+    next_period_status_name: string | null,
+    next_status_name: string | null,
+    next_status_purchases_sum: string | null,
+    next_status_bonus_percent: string | null,
+    next_status_discount_percent: string | null,
+    progressive_scale_type: number | null,
+    sum_to_next_status: string | null,
+    phone_is_free: string | null,
+    outer_systems_interface_type: number | null,
+    special_days_types: SpecialDaysTypes[] | null,
+    not_to_send_sms: number,
+    not_to_send_email: number,
+    tags: string[] | null,
+    top_sales: string[] | null,
+    program_write_off_type: string | null,
+    allow_manual_card_spend: number
+    _bill_data?: {
+        items: BillDataItems[] | null
+    }
+    cards?: SearchClientResponseCards[]
+    interfaces?: Interfaces[]
 }
 
 // Поля запроса addclient
@@ -75,11 +157,19 @@ export type AddClientRequestBody = {
     card_barcode?: string
 }
 
+// Поля ответа addclient
+export type AddClientResponseBody = {
+    success?: number,
+    client_id: number,
+    result_code: string,
+    result_text: string
+}
+
 // Поля запроса getclientfullbalance
-export type BalanceItem = {
-    balance: string,
-    begin_dt: string | null,
-    expire_dt: string | null
+export type GetClientFullBalanceResponseBody = {
+    balance?: string,
+    begin_dt?: string | null,
+    expire_dt?: string | null
 }
 
 export type GetClientFullBalanceRequestBody = {
@@ -92,6 +182,20 @@ export type GetClientCards = {
     outer_systems_interface_type?: null | 4 | 5 | 10
 }
 
+// Поля ответа getclientcards
+type Cards = {
+    code?: string,
+    barcode?: string,
+    card_id?: number,
+    outer_systems_interface_name?: string,
+    outer_systems_interface_type?: number | null
+}
+
+export type GetClientCardsResponseBody = {
+    result_code: string,
+    cards?: Cards[]
+}
+
 // Поля запроса replacecard
 export type ReplaceCard = {
     search_mode: 0 | 1,
@@ -101,8 +205,8 @@ export type ReplaceCard = {
 
 // Поля ответа replacecard
 export type ReplaceCardResponseBody = {
-    result_code: string | null
-    result_text?: string | null
+    result_code: string
+    result_text?: string
 }
 
 // Поля запроса blockcard
@@ -112,7 +216,7 @@ export type BlockCard = {
 
 // Поля ответа blockcard
 export type BlockCardResponseBody = {
-    result_code: string | number
+    result_code: string
     result_text: string
 }
 
@@ -120,6 +224,11 @@ export type BlockCardResponseBody = {
 export type GetConfirmationCode = {
     client_id: number
     outer_systems_interface_type: 5
+}
+
+// Поля ответа getconfirmationcode
+export type GetConfirmationCodeResponseBody = {
+    confirmation_code: string
 }
 
 // Поля запроса getlisttags
@@ -159,6 +268,12 @@ export type AddClientTags = {
     tags: number[]
 }
 
+//Поля ответа addclienttags
+export type AddClientTagsResponseBody = {
+    result_code: string,
+    result_text: string
+}
+
 // Поля запроса updateclienttag
 export type UpdateClientTag = {
     client_id: number,
@@ -169,10 +284,24 @@ export type UpdateClientTag = {
     }
 }
 
+//Поля ответа updateclienttag
+export type UpdateClientTagResponseBody = {
+    result_code: string,
+    result_text: string,
+    tag_id?: number,
+    sum?: number
+}
+
 // Поля запроса deleteclienttags
 export type DeleteClientTags = {
     client_id: number,
     tags: number[]
+}
+
+//Поля ответа deleteclienttags
+export type DeleteClientTagsResponseBody = {
+    result_code: string,
+    result_text: string
 }
 
 // Поля запроса processsale

@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test'
 import * as clientsHelper from '../../helpers/clientsHelper'
 import * as tagsHelper from '../../helpers/tagsHelper'
+import { addClientTagsResponseSchema } from '../../schemas/tagsSchema'
 
 test('addclienttags - добавляем тег клиенту', async ({ request }) => {
 
@@ -11,5 +12,7 @@ test('addclienttags - добавляем тег клиенту', async ({ reques
     const tagId = getListTags.responseBody.tags_list[0].tag_id
     const addClientTags = await tagsHelper.addClientTags(request, clientId, [tagId])
     expect(addClientTags.response.status()).toBe(200)
+    expect(addClientTags.responseBody.result_code).toBe('0')
+    addClientTagsResponseSchema.parse(addClientTags.responseBody)
 
 })
