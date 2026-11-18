@@ -1,7 +1,6 @@
 import type { APIRequestContext } from '@playwright/test'
 import * as api from '../api.config'
 import type * as Types from '../types/RequestTypes'
-import { environmentConfig } from '../environment.config'
 
 // Собираем тело запроса searchpromocode
 export function buildSearchPromocodeBody(promoCode: string): Types.SearchPromoCode {
@@ -75,7 +74,7 @@ export function buildGenerate_PromocodeBody(clientId?: number | null): Types.Gen
 
     return {
         client_id: clientId,
-        list_id: environmentConfig.promocodeGroupId
+        list_id: api.environmentConfig.promocodeGroupId
     }
 
 }

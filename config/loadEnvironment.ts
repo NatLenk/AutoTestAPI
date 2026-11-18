@@ -15,7 +15,7 @@ export function loadEnvironment(projectDirectory: string, selectedEnvironment?: 
     const environment = selectedEnvironment?.trim().toLowerCase()
 
     if (environment !== 'dev' && environment !== 'prod') {
-        throw new Error('В environment.config.ts укажите TEST_ENVIRONMENT = \'DEV\' или \'PROD\'.')
+        throw new Error('В api.config.ts укажите TEST_ENVIRONMENT = \'DEV\' или \'PROD\'.')
     }
     const fileName = `.env.${environment}.local`
     let values: ReturnType<typeof parseEnv>
