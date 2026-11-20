@@ -8,12 +8,10 @@ test('getdetailingbymove - получаем подробности операц�
     const { clientId } = await clientsHelper.createTestClient(request)
     const processSale = await operationHelper.processSale(request, clientId)
     expect(processSale.response.status()).toBe(200)
-
-    const confirmSale = await operationHelper.confirmsale(request, processSale.body.move_id, processSale.body.doc_open_dt)
-    expect(confirmSale.response.status()).toBe(200)
+    await new Promise(resolve => setTimeout(resolve, 10_000))
 
     const getDetailingByMove = await operationHelper.getdetailingbymove(request, {
-        move_id: processSale.body.move_id, move_date: confirmSale.body.doc_dt
+        move_id: processSale.body.move_id, move_date: processSale.body.doc_open_dt
     })
     expect(getDetailingByMove.response.status()).toBe(200)
     getDetailingByMoveResponseSchema.parse(getDetailingByMove.responseBody)

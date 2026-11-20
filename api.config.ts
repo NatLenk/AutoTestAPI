@@ -51,7 +51,7 @@ export function getLocalDateTime(date = new Date()): string {
     const minutes = pad(date.getMinutes())
     const seconds = pad(date.getSeconds())
 
-    return `${hours}:${minutes}:${seconds} ${day}.${month}.${year}`
+    return `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`
 }
 
 type HttpMethod =
